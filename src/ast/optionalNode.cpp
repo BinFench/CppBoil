@@ -2,9 +2,9 @@
 
 class optionalNode: public ASTNode {
     public:
-        optionalNode(ASTNode node);
+        optionalNode(ASTNode *node);
 };
     
-optionalNode::optionalNode(ASTNode node) {
+optionalNode::optionalNode(ASTNode *node) {
     populate("optional", node);
 }
