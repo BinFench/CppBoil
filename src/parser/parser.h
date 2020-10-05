@@ -2,6 +2,7 @@
 #include "rule.h"
 #include "../stack/stack.h"
 #include <string>
+#include <functional>
 
 #ifndef PARSER_H
 #define PARSER_H
@@ -35,6 +36,7 @@ class parser {
         rule *optional(rule *text);
         rule *peek();
         rule *pop();
+        rule *push(std::function<void*()> func);
         rule *push(rule *text);
         rule *regex(std::string expr);
         template<typename... Args>

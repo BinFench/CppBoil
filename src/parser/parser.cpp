@@ -24,13 +24,35 @@
 #include "../ast/testNode.cpp"
 #include "../ast/testNotNode.cpp"
 #include "../ast/zeroOrMoreNode.cpp"
+#include <type_traits>
+#include <functional>
 
 parser::parser() {
     hasStack = false;
 }
 
 bool parser::parse(std::string source, rule *root) {
-    return true;
+    linkNode *parsePath = new linkNode();
+    if (root->getNode()->parse(&source, parsePath)) {
+        if (!hasStack) {
+            values = new stack();
+        } else {
+            delete values;
+            values = new stack();
+        }
+
+        linkNode *current = parsePath;
+        current->getChild()->act(values);
+        while (current->hasSibling) {
+            current = current->getSibling();
+            current->getChild()->act(values);
+        }
+
+        delete parsePath;
+        return true;
+    }
+
+    return false;
 }
 
 rule *parser::any() {
@@ -38,10 +60,28 @@ rule *parser::any() {
 }
 
 template <typename... Args>
-rule *parser::anyOf(Args... rules) {}
+rule *parser::anyOf(Args... rules) {
+    return new rule(new anyOfNode(rules...->getNode()));
+}
 
 template <typename T, typename U>
-rule *parser::charRange(T begin, U end) {}
+rule *parser::charRange(T begin, U end) {
+    chNode *a;
+    chNode *b;
+    if (std::is_same<T, char>::value) {
+        a = new chNode(begin);
+    } else if (std::is_same<T, chNode>::value) {
+        a = begin;
+    }
+
+    if (std::is_same<U, char>::value) {
+        b = new chNode(end);
+    } else if (std::is_same<U, chNode>::value) {
+        b = end;
+    }
+
+    return new rule(new charRangeNode(a, b));
+}
 
 rule *parser::ch(char cha) {
     return new rule(new chNode(cha));
@@ -56,24 +96,32 @@ rule *parser::EOI() {
 }
 
 template <typename... Args>
-rule *parser::firstOf(Args... rules) {};
+rule *parser::firstOf(Args... rules) {
+    return new rule(new firstOfNode(rules...->getNode()));
+};
 
 template <typename T>
-rule *parser::ignoreCase(T text) {}
+rule *parser::ignoreCase(T text) {
+    return new rule(new ignoreCaseNode(text));
+}
 
 rule *parser::match() {
     return new rule(new matchNode());
 }
 
 template <typename... Args>
-rule *parser::noneOf(Args... rules) {}
+rule *parser::noneOf(Args... rules) {
+    return new rule(new noneOfNode(rules...->getNode()));
+}
 
 rule *parser::nothing() {
     return new rule(new nothingNode());
 }
 
 template <typename... Args>
-rule *parser::oneOrMore(Args... rules) {}
+rule *parser::oneOrMore(Args... rules) {
+    return new rule(new oneOrMoreNode(rules...->getNode()));
+}
 
 rule *parser::optional(rule *text) {
     return new rule(new optionalNode((ASTNode*)(text->getNode())));
@@ -87,8 +135,12 @@ rule *parser::pop() {
     return new rule(new popNode());
 }
 
+rule *parser::push(std::function<void*()> func) {
+    return new rule(new pushNode(func));
+}
+
 rule *parser::push(rule *text) {
-    return new rule(new pushNode());
+    return new rule(new pushNode(text));
 }
 
 rule *parser::regex(std::string expr) {
@@ -96,7 +148,9 @@ rule *parser::regex(std::string expr) {
 }
 
 template <typename... Args>
-rule *parser::sequence(Args... rules) {}
+rule *parser::sequence(Args... rules) {
+    return new rule(new sequenceNode(rules...->getNode()));
+}
 
 rule *parser::String(std::string text) {
     return new rule(new stringNode(text));
@@ -115,4 +169,6 @@ rule *parser::testNot(rule *text) {
 }
 
 template <typename... Args>
-rule *parser::zeroOrMore(Args... rules) {}
+rule *parser::zeroOrMore(Args... rules) {
+    return new rule(new zeroOrMoreNode(rules...->getNode()));
+}

@@ -34,6 +34,10 @@ void ASTNode::populate(std::string type, ASTNode *node) {
         id = type;
         link = new linkNode();
         link->attach(node);
+    } else {
+        linkNode *sibling = new linkNode();
+        sibling->attach(node);
+        link->append(sibling);
     }
 }
 

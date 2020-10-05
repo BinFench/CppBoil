@@ -8,12 +8,16 @@ class linkNode {
         linkNode();
         void append(linkNode* sibling);
         void attach(ASTNode* child);
+        bool hasSibling;
+        bool hasChild;
+
+        ASTNode* getChild();
+        linkNode* getSibling();
+        linkNode* getTail();
 
     protected:
         ASTNode* ASTChildren;
         linkNode* sibling;
-        bool hasSibling;
-        bool hasChild;
 };
 
 #endif

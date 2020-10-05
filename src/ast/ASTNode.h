@@ -1,10 +1,15 @@
 #include <string>
 #include "linkNode.h"
+#include "../stack/stack.h"
 
 #ifndef ASTNODE_H
 #define ASTNODE_H
 
 class ASTNode {
+    public:
+        virtual bool parse(std::string *source, linkNode* path);
+        virtual void act(stack *values);
+
     protected:
         std::string id;
         linkNode* link;
