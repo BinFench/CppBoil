@@ -8,5 +8,5 @@ class sequenceNode: public ASTNode {
     
 template<typename... Args>
 sequenceNode::sequenceNode(Args... nodes) {
-    populate("sequence", nodes);
+    populate("sequence", nodes...);
 }

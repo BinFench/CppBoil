@@ -1,5 +1,8 @@
 #include "stackLink.h"
 
+#ifndef STACK_H
+#define STACK_H
+
 class stack
 {
 public:
@@ -13,3 +16,5 @@ protected:
     int size;
     stackLink *head;
 };
+
+#endif

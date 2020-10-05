@@ -1,6 +1,9 @@
 #include <string>
 #include "linkNode.h"
 
+#ifndef ASTNODE_H
+#define ASTNODE_H
+
 class ASTNode {
     protected:
         std::string id;
@@ -12,3 +15,5 @@ class ASTNode {
         void populate(std::string type, std::string node);
         void populate(std::string type, char node);
 };
+
+#endif

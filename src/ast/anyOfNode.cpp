@@ -8,5 +8,5 @@ class anyOfNode: public ASTNode {
     
 template<typename... Args>
 anyOfNode::anyOfNode(Args... nodes) {
-    populate("anyOf", nodes);
+    populate("anyOf", nodes...);
 }

@@ -1,5 +1,8 @@
 #include "../ast/ASTNode.h"
 
+#ifndef RULE_H
+#define RULE_H
+
 class rule {
     public:
         rule(ASTNode *node);
@@ -8,3 +11,5 @@ class rule {
     protected:
         ASTNode *node;
 };
+
+#endif

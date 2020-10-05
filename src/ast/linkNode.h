@@ -1,5 +1,8 @@
 class ASTNode;
 
+#ifndef LINKNODE_H
+#define LINKNODE_H
+
 class linkNode {
     public:
         linkNode();
@@ -12,3 +15,5 @@ class linkNode {
         bool hasSibling;
         bool hasChild;
 };
+
+#endif

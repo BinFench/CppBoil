@@ -3,6 +3,9 @@
 #include "../stack/stack.h"
 #include <string>
 
+#ifndef PARSER_H
+#define PARSER_H
+
 class parser {
     public:
         stack *values;
@@ -43,3 +46,5 @@ class parser {
         template<typename... Args>
         rule *zeroOrMore(Args... rules);
 };
+
+#endif

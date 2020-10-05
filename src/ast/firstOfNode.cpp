@@ -8,5 +8,5 @@ class firstOfNode: public ASTNode {
     
 template<typename... Args>
 firstOfNode::firstOfNode(Args... nodes) {
-    populate("firstOf", nodes);
+    populate("firstOf", nodes...);
 }

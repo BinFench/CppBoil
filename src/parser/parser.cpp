@@ -1,6 +1,4 @@
-#include <string>
 #include "../stack/stack.h"
-#include "../ast/ASTNode.h"
 #include "parser.h"
 #include "rule.h"
 #include "../ast/anyNode.cpp"
@@ -36,7 +34,7 @@ bool parser::parse(std::string source, rule *root) {
 }
 
 rule *parser::any() {
-    return new rule((ASTNode*)new anyNode());
+    return new rule(new anyNode());
 }
 
 template <typename... Args>
@@ -46,15 +44,15 @@ template <typename T, typename U>
 rule *parser::charRange(T begin, U end) {}
 
 rule *parser::ch(char cha) {
-    return new rule((ASTNode*)new chNode(cha));
+    return new rule(new chNode(cha));
 }
 
 rule *parser::empty() {
-    return new rule((ASTNode*)new emptyNode());
+    return new rule(new emptyNode());
 }
 
 rule *parser::EOI() {
-    return new rule((ASTNode*)new EOINode());
+    return new rule(new EOINode());
 }
 
 template <typename... Args>
@@ -64,56 +62,56 @@ template <typename T>
 rule *parser::ignoreCase(T text) {}
 
 rule *parser::match() {
-    return new rule((ASTNode*)new matchNode());
+    return new rule(new matchNode());
 }
 
 template <typename... Args>
 rule *parser::noneOf(Args... rules) {}
 
 rule *parser::nothing() {
-    return new rule((ASTNode*)new nothingNode());
+    return new rule(new nothingNode());
 }
 
 template <typename... Args>
 rule *parser::oneOrMore(Args... rules) {}
 
 rule *parser::optional(rule *text) {
-    return new rule((ASTNode*)new optionalNode((ASTNode*)(text->getNode())));
+    return new rule(new optionalNode((ASTNode*)(text->getNode())));
 }
 
 rule *parser::peek() {
-    return new rule((ASTNode*)new peekNode());
+    return new rule(new peekNode());
 }
 
 rule *parser::pop() {
-    return new rule((ASTNode*)new popNode());
+    return new rule(new popNode());
 }
 
 rule *parser::push(rule *text) {
-    return new rule((ASTNode*)new pushNode());
+    return new rule(new pushNode());
 }
 
 rule *parser::regex(std::string expr) {
-    return new rule((ASTNode*)new regexNode(expr));
+    return new rule(new regexNode(expr));
 }
 
 template <typename... Args>
 rule *parser::sequence(Args... rules) {}
 
 rule *parser::String(std::string text) {
-    return new rule((ASTNode*)new stringNode(text));
+    return new rule(new stringNode(text));
 }
 
 rule *parser::swap() {
-    return new rule((ASTNode*)new swapNode());
+    return new rule(new swapNode());
 }
 
 rule *parser::test(rule *text) {
-    return new rule((ASTNode*)new testNode((ASTNode*)text->getNode()));
+    return new rule(new testNode((ASTNode*)text->getNode()));
 }
 
 rule *parser::testNot(rule *text) {
-    return new rule((ASTNode*)new testNotNode((ASTNode*)text->getNode()));
+    return new rule(new testNotNode((ASTNode*)text->getNode()));
 }
 
 template <typename... Args>

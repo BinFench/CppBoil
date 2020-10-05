@@ -8,5 +8,5 @@ class noneOfNode: public ASTNode {
     
 template<typename... Args>
 noneOfNode::noneOfNode(Args... nodes) {
-    populate("noneOf", nodes);
+    populate("noneOf", nodes...);
 }
