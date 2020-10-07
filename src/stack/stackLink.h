@@ -4,6 +4,7 @@
 class stackLink {
     public:
         stackLink *link;
+        bool isRule;
         void *item;
 
         stackLink();

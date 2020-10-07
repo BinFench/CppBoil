@@ -8,7 +8,8 @@
 class ASTNode {
     public:
         virtual bool parse(std::string *source, linkNode* path);
-        virtual void act(stack *values);
+        virtual void *act(stack *values);
+        std::string getId();
 
     protected:
         std::string id;

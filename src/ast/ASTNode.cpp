@@ -2,6 +2,7 @@
 #include "stringNode.cpp"
 #include "chNode.cpp"
 #include <type_traits>
+#include <string>
 
 template<typename T, typename... Args>
 void ASTNode::populate(std::string type, T *node, Args... nodes) {
@@ -47,4 +48,8 @@ void ASTNode::populate(std::string type, std::string node) {
 
 void ASTNode::populate(std::string type, char node) {
     populate(type, new chNode(node));
+}
+
+std::string ASTNode::getId() {
+    return id;
 }

@@ -24,6 +24,7 @@
 #include "../ast/testNode.cpp"
 #include "../ast/testNotNode.cpp"
 #include "../ast/zeroOrMoreNode.cpp"
+#include "../arg.h"
 #include <type_traits>
 #include <functional>
 
@@ -135,8 +136,13 @@ rule *parser::pop() {
     return new rule(new popNode());
 }
 
-rule *parser::push(std::function<void*()> func) {
-    return new rule(new pushNode(func));
+rule *parser::push(std::function<void*(arg*)> func, arg* Arg) {
+    return new rule(new pushNode(func, Arg));
+}
+
+template<typename... Args>
+rule *parser::push(std::function<void*(arg*)> func, Args... Arg) {
+    return push(func, new arg(Arg...));
 }
 
 rule *parser::push(rule *text) {

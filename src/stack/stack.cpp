@@ -9,6 +9,25 @@ void stack::push(void *item)
 {
     stackLink *link = new stackLink();
     link->item = item;
+    link->isRule = false;
+    if (size == 0)
+    {
+        head = link;
+    }
+    else
+    {
+        link->link = head;
+        head = link;
+    }
+
+    size++;
+}
+
+void stack::push(rule *item)
+{
+    stackLink *link = new stackLink();
+    link->item = item;
+    link->isRule = true;
     if (size == 0)
     {
         head = link;

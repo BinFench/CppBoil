@@ -1,6 +1,7 @@
 #include "../ast/ASTNode.h"
 #include "rule.h"
 #include "../stack/stack.h"
+#include "../arg.h"
 #include <string>
 #include <functional>
 
@@ -36,7 +37,9 @@ class parser {
         rule *optional(rule *text);
         rule *peek();
         rule *pop();
-        rule *push(std::function<void*()> func);
+        rule *push(std::function<void*(arg*)> func, arg* Arg);
+        template<typename... Args>
+        rule *push(std::function<void*(arg*)> func, Args... Arg);
         rule *push(rule *text);
         rule *regex(std::string expr);
         template<typename... Args>

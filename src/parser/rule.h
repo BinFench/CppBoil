@@ -1,7 +1,7 @@
-#include "../ast/ASTNode.h"
-
 #ifndef RULE_H
 #define RULE_H
+
+class ASTNode;
 
 class rule {
     public:
