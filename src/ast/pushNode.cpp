@@ -9,24 +9,43 @@ public:
     pushNode(std::function<void *(arg *)> func, arg *Arg);
     template <typename... Args>
     pushNode(std::function<void *(arg *)> func, Args... Arg);
+    pushNode(std::function<void *()> func);
     pushNode(rule *text);
     void *act(stack *values);
     void *push();
     bool parse(std::string *source, linkNode *path, std::string *str);
 
 protected:
-    std::function<void *(arg *)> func;
+    std::function<void *(arg *)> argFunc;
+    std::function<void *()> func;
+    bool hasArgs;
     rule *match;
     std::string which;
     arg *Arg;
+    stack *temp;
 };
 
 pushNode::pushNode(std::function<void *(arg *)> func, arg *Arg)
 {
     id = "push";
     which = "func";
+    argFunc = func;
+    Arg = Arg;
+    hasArgs = true;
+}
+
+template <typename... Args>
+pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg) {
+    pushNode(func, new arg(Arg...));
+}
+
+pushNode::pushNode(std::function<void *()> func)
+{
+    id = "push";
+    which = "func";
     func = func;
     Arg = Arg;
+    hasArgs = false;
 }
 
 pushNode::pushNode(rule *text)
@@ -40,13 +59,20 @@ void *pushNode::push()
 {
     if (which == "func")
     {
-        return func(Arg);
+        if (hasArgs) {
+            return argFunc(Arg);
+        }
+        return func();
+    }
+    if (match->getNode()->getId() == "match" || match->getNode()->getId() == "pop" || match->getNode()->getId() == "peek") {
+        return match->getNode()->act(temp);
     }
     return match;
 }
 
 void *pushNode::act(stack *values)
 {
+    temp = values;
     if (which == "func" && Arg != nullptr)
     {
         Arg->values = values;

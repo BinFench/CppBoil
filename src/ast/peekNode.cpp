@@ -5,6 +5,7 @@ class peekNode : public ASTNode
 public:
     peekNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 peekNode::peekNode()
@@ -24,4 +25,8 @@ bool peekNode::parse(std::string *source, linkNode *path, std::string *str)
     current->attach(this);
 
     return true;
+}
+
+void *peekNode::act(stack *values) {
+    return values->peek();
 }

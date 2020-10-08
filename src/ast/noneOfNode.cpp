@@ -17,6 +17,7 @@ noneOfNode::noneOfNode(Args... nodes)
 bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     std::string *blank;
+    *blank = *str;
     linkNode *dummy = new linkNode();
     linkNode *current = link;
     std::string sample = *source;

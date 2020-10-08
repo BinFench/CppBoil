@@ -17,6 +17,7 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str)
     std::string copy = *source;
     linkNode *dummy = new linkNode();
     std::string *temp;
+    *temp = *str;
 
     if (link->getChild()->parse(&copy, dummy, temp))
     {

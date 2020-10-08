@@ -5,6 +5,7 @@ class matchNode : public ASTNode
 public:
     matchNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 
 protected:
     std::string match;
@@ -28,4 +29,8 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str)
     current->attach(this);
 
     return true;
+}
+
+void *matchNode::act(stack *values) {
+    return &match;
 }

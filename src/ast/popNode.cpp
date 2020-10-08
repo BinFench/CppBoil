@@ -5,6 +5,7 @@ class popNode : public ASTNode
 public:
     popNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 popNode::popNode()
@@ -24,4 +25,8 @@ bool popNode::parse(std::string *source, linkNode *path, std::string *str)
     current->attach(this);
 
     return true;
+}
+
+void *popNode::act(stack *values) {
+    return values->pop();
 }

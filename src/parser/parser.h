@@ -16,6 +16,7 @@ public:
 
     parser();
     bool parse(std::string source, rule *root);
+    void *getResult();
 
     rule *any();
     template <typename... Args>

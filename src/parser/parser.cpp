@@ -66,6 +66,10 @@ bool parser::parse(std::string source, rule *root)
     return false;
 }
 
+void *parser::getResult() {
+    return values->pop();
+}
+
 rule *parser::any()
 {
     return new rule(new anyNode());

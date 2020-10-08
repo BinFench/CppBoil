@@ -15,6 +15,7 @@ zeroOrMoreNode::zeroOrMoreNode(ASTNode *node)
 bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     std::string *blank;
+    *blank = *str;
     bool first = true;
     do
     {
