@@ -1,20 +1,25 @@
 #include "ASTNode.h"
 
-class testNotNode: public ASTNode {
-    public:
-        testNotNode(ASTNode *node);
-        bool parse(std::string *source, linkNode* path);
+class testNotNode : public ASTNode
+{
+public:
+    testNotNode(ASTNode *node);
+    bool parse(std::string *source, linkNode *path, std::string *str);
 };
-    
-testNotNode::testNotNode(ASTNode *node) {
+
+testNotNode::testNotNode(ASTNode *node)
+{
     populate("testNot", node);
 }
 
-bool testNotNode::parse(std::string *source, linkNode *path) {
+bool testNotNode::parse(std::string *source, linkNode *path, std::string *str)
+{
     std::string copy = *source;
     linkNode *dummy = new linkNode();
+    std::string *temp;
 
-    if (link->getChild()->parse(&copy, dummy)) {
+    if (link->getChild()->parse(&copy, dummy, temp))
+    {
         delete dummy;
         return false;
     }

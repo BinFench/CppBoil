@@ -1,15 +1,18 @@
 #include "ASTNode.h"
 
-class EOINode: public ASTNode {
-    public:
-        EOINode();
-        bool parse(std::string *source, linkNode* path);
+class EOINode : public ASTNode
+{
+public:
+    EOINode();
+    bool parse(std::string *source, linkNode *path, std::string str);
 };
-    
-EOINode::EOINode() {
+
+EOINode::EOINode()
+{
     id = "EOI";
 }
 
-bool EOINode::parse(std::string *source, linkNode *path) {
+bool EOINode::parse(std::string *source, linkNode *path, std::string str)
+{
     return (source->length() == 0);
 }

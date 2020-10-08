@@ -1,23 +1,32 @@
 #include "ASTNode.h"
 
-class zeroOrMoreNode: public ASTNode {
-    public:
-        zeroOrMoreNode(ASTNode *node);
-        bool parse(std::string *source, linkNode* path);
+class zeroOrMoreNode : public ASTNode
+{
+public:
+    zeroOrMoreNode(ASTNode *node);
+    bool parse(std::string *source, linkNode *path, std::string *str);
 };
-    
-zeroOrMoreNode::zeroOrMoreNode(ASTNode *node) {
+
+zeroOrMoreNode::zeroOrMoreNode(ASTNode *node)
+{
     populate("zeroOrMore", node);
 }
 
-bool zeroOrMoreNode::parse(std::string *source, linkNode *path) {
+bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
+{
+    std::string *blank;
     bool first = true;
-    do {
-        if (first && link->getChild()->parse(source, path)) {
+    do
+    {
+        if (first && link->getChild()->parse(source, path, blank))
+        {
             first = false;
-        } else if (first) {
+        }
+        else if (first)
+        {
             return true;
         }
-    } while (link->getChild()->parse(source, path));
+    } while (link->getChild()->parse(source, path, blank));
+    *str += *blank;
     return true;
 }
