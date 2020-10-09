@@ -4,6 +4,8 @@
 #include <string>
 #include <algorithm>
 
+#ifndef IGNORECASENODE_CPP
+#define IGNORECASENODE_CPP
 class ignoreCaseNode : public ASTNode
 {
 public:
@@ -65,3 +67,4 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
         return false;
     }
 }
+#endif

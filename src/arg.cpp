@@ -4,19 +4,24 @@
 #include "ast/ASTNode.h"
 #include <type_traits>
 
-int arg::getSize() {
+int arg::getSize()
+{
     return size;
 }
 
-void *arg::get(int i) {
-    if (i <= size) {
+void *arg::get(int i)
+{
+    if (i <= size)
+    {
         stackLink *current = link;
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < i; j++)
+        {
             current = current->link;
         }
 
         void *toRet = current->item;
-        if (current->isRule && (((rule *)(current->item))->getNode()->getId() == "pop" || ((rule *)(current->item))->getNode()->getId() == "peek")) {
+        if (current->isRule && (((rule *)(current->item))->getNode()->getId() == "pop" || ((rule *)(current->item))->getNode()->getId() == "peek"))
+        {
             toRet = ((rule *)(current->item))->getNode()->act(values);
         }
 
@@ -24,42 +29,53 @@ void *arg::get(int i) {
     }
 }
 
-template<typename... Args>
-arg::arg(Args... args) {
+template <typename... Args>
+arg::arg(Args... args)
+{
     size = 0;
-    populate(link, args);
+    populate(link, args...);
 }
 
-template<typename T, typename... Args>
-void arg::populate(stackLink *current, T par, Args... Arg) {
+template <typename T, typename... Args>
+void arg::populate(stackLink *current, T par, Args... Arg)
+{
     stackLink *add = new stackLink();
     add->item = par;
-    
-    if (std::is_same<T, rule>::value) {
+
+    if (std::is_same<T, rule>::value)
+    {
         add->isRule = true;
     }
-    
-    if (size == 0) {
+
+    if (size == 0)
+    {
         current = add;
-    } else {
+    }
+    else
+    {
         current->link = add;
     }
-    
-    populate(add, Arg);
+
+    populate(add, Arg...);
 };
 
-template<typename T>
-void arg::populate(stackLink *current, T par) {
+template <typename T>
+void arg::populate(stackLink *current, T par)
+{
     stackLink *add = new stackLink();
     add->item = par;
-    
-    if (std::is_same<T, rule>::value) {
+
+    if (std::is_same<T, rule>::value)
+    {
         add->isRule = true;
     }
-    
-    if (size == 0) {
+
+    if (size == 0)
+    {
         current = add;
-    } else {
+    }
+    else
+    {
         current->link = add;
     }
 };

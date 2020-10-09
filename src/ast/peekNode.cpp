@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef PEEKNODE_CPP
+#define PEEKNODE_CPP
 class peekNode : public ASTNode
 {
 public:
@@ -27,6 +29,8 @@ bool peekNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *peekNode::act(stack *values) {
+void *peekNode::act(stack *values)
+{
     return values->peek();
 }
+#endif

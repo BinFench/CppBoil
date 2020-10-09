@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef ANYNODE_CPP
+#define ANYNODE_CPP
 class anyNode : public ASTNode
 {
 public:
@@ -22,3 +24,4 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     return false;
 }
+#endif

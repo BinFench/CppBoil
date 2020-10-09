@@ -66,7 +66,8 @@ bool parser::parse(std::string source, rule *root)
     return false;
 }
 
-void *parser::getResult() {
+void *parser::getResult()
+{
     return values->pop();
 }
 
@@ -78,7 +79,7 @@ rule *parser::any()
 template <typename... Args>
 rule *parser::anyOf(Args... rules)
 {
-    return new rule(new anyOfNode(rules...->getNode()));
+    return new rule(new anyOfNode((rules->getNode())...));
 }
 
 template <typename T, typename U>
@@ -125,7 +126,7 @@ rule *parser::EOI()
 template <typename... Args>
 rule *parser::firstOf(Args... rules)
 {
-    return new rule(new firstOfNode(rules...->getNode()));
+    return new rule(new firstOfNode((rules->getNode())...));
 };
 
 template <typename T>
@@ -142,7 +143,7 @@ rule *parser::match()
 template <typename... Args>
 rule *parser::noneOf(Args... rules)
 {
-    return new rule(new noneOfNode(rules...->getNode()));
+    return new rule(new noneOfNode((rules->getNode())...));
 }
 
 rule *parser::nothing()
@@ -153,7 +154,7 @@ rule *parser::nothing()
 template <typename... Args>
 rule *parser::oneOrMore(Args... rules)
 {
-    return new rule(new oneOrMoreNode(rules...->getNode()));
+    return new rule(new oneOrMoreNode((rules->getNode())...));
 }
 
 rule *parser::optional(rule *text)
@@ -195,7 +196,7 @@ rule *parser::regex(std::string expr)
 template <typename... Args>
 rule *parser::sequence(Args... rules)
 {
-    return new rule(new sequenceNode(rules...->getNode()));
+    return new rule(new sequenceNode((rules->getNode())...));
 }
 
 rule *parser::String(std::string text)
@@ -221,7 +222,7 @@ rule *parser::testNot(rule *text)
 template <typename... Args>
 rule *parser::zeroOrMore(Args... rules)
 {
-    return new rule(new zeroOrMoreNode(rules...->getNode()));
+    return new rule(new zeroOrMoreNode((rules->getNode())...));
 }
 
 rule *parser::recursion(std::function<rule *(arg *)> func, arg *Arg)

@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef FIRSTOF_CPP
+#define FIRSTOF_CPP
 class firstOfNode : public ASTNode
 {
 public:
@@ -31,3 +33,4 @@ bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     return false;
 }
+#endif

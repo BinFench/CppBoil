@@ -2,6 +2,8 @@
 #include <string>
 #include <regex>
 
+#ifndef REGEXNODE_CPP
+#define REGEXNODE_CPP
 class regexNode : public ASTNode
 {
 public:
@@ -30,3 +32,4 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
     }
     return false;
 }
+#endif

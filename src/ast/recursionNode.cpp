@@ -3,6 +3,8 @@
 #include "../parser/rule.h"
 #include "../arg.h"
 
+#ifndef RECURSIONNODE_CPP
+#define RECURSIONNODE_CPP
 class recursionNode : public ASTNode
 {
 public:
@@ -54,3 +56,4 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
     delete eval;
     return test;
 }
+#endif

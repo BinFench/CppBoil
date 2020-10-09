@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef SEQUENCENODE_CPP
+#define SEQUENCENODE_CPP
 class sequenceNode : public ASTNode
 {
 public:
@@ -49,3 +51,4 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
     *str = *ret;
     return true;
 }
+#endif

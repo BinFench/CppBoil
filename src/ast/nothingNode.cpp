@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef NOTHINGNODE_CPP
+#define NOTHINGNODE_CPP
 class nothingNode : public ASTNode
 {
 public:
@@ -16,3 +18,4 @@ bool nothingNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     return false;
 }
+#endif

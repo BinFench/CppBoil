@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef MATCHNODE_CPP
+#define MATCHNODE_CPP
 class matchNode : public ASTNode
 {
 public:
@@ -31,6 +33,8 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *matchNode::act(stack *values) {
+void *matchNode::act(stack *values)
+{
     return &match;
 }
+#endif

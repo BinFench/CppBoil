@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef ZEROORMORENODE_CPP
+#define ZEROORMORENODE_CPP
 class zeroOrMoreNode : public ASTNode
 {
 public:
@@ -31,3 +33,4 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
     *str += *blank;
     return true;
 }
+#endif

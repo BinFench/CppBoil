@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef NONEOFNODE_CPP
+#define NONEOFNODE_CPP
 class noneOfNode : public ASTNode
 {
 public:
@@ -41,3 +43,4 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
     delete dummy;
     return true;
 }
+#endif

@@ -2,6 +2,8 @@
 #include "chNode.cpp"
 #include <algorithm>
 
+#ifndef CHARRANGENODE_CPP
+#define CHARRANGENODE_CPP
 class charRangeNode : public ASTNode
 {
 public:
@@ -41,3 +43,4 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     return false;
 }
+#endif

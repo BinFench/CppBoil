@@ -3,6 +3,8 @@
 #include "../parser/rule.h"
 #include "../arg.h"
 
+#ifndef PUSHNODE_CPP
+#define PUSHNODE_CPP
 class pushNode : public ASTNode
 {
 public:
@@ -35,7 +37,8 @@ pushNode::pushNode(std::function<void *(arg *)> func, arg *Arg)
 }
 
 template <typename... Args>
-pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg) {
+pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg)
+{
     pushNode(func, new arg(Arg...));
 }
 
@@ -59,12 +62,14 @@ void *pushNode::push()
 {
     if (which == "func")
     {
-        if (hasArgs) {
+        if (hasArgs)
+        {
             return argFunc(Arg);
         }
         return func();
     }
-    if (match->getNode()->getId() == "match" || match->getNode()->getId() == "pop" || match->getNode()->getId() == "peek") {
+    if (match->getNode()->getId() == "match" || match->getNode()->getId() == "pop" || match->getNode()->getId() == "peek")
+    {
         return match->getNode()->act(temp);
     }
     return match;
@@ -101,3 +106,4 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str)
 
     return true;
 }
+#endif

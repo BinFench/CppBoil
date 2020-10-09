@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef TESTNODE_CPP
+#define TESTNODE_CPP
 class testNode : public ASTNode
 {
 public:
@@ -27,3 +29,4 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str)
     delete dummy;
     return false;
 }
+#endif

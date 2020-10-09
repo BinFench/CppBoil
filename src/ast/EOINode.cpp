@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef EOINODE_CPP
+#define EOINODE_CPP
 class EOINode : public ASTNode
 {
 public:
@@ -16,3 +18,4 @@ bool EOINode::parse(std::string *source, linkNode *path, std::string str)
 {
     return (source->length() == 0);
 }
+#endif

@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef POPNODE_CPP
+#define POPNODE_CPP
 class popNode : public ASTNode
 {
 public:
@@ -27,6 +29,9 @@ bool popNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *popNode::act(stack *values) {
+void *popNode::act(stack *values)
+{
     return values->pop();
 }
+
+#endif

@@ -1,5 +1,7 @@
 #include "ASTNode.h"
 
+#ifndef SWAPNODE_CPP
+#define SWAPNODE_CPP
 class swapNode : public ASTNode
 {
 public:
@@ -27,7 +29,9 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *swapNode::act(stack *values) {
+void *swapNode::act(stack *values)
+{
     values->swap();
     return nullptr;
 }
+#endif
