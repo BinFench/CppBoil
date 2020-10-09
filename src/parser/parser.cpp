@@ -1,33 +1,4 @@
-#include "../stack/stack.h"
 #include "parser.h"
-#include "rule.h"
-#include "../ast/anyNode.cpp"
-#include "../ast/anyOfNode.cpp"
-#include "../ast/charRangeNode.cpp"
-#include "../ast/chNode.cpp"
-#include "../ast/emptyNode.cpp"
-#include "../ast/EOINode.cpp"
-#include "../ast/firstOfNode.cpp"
-#include "../ast/ignoreCaseNode.cpp"
-#include "../ast/matchNode.cpp"
-#include "../ast/noneOfNode.cpp"
-#include "../ast/nothingNode.cpp"
-#include "../ast/oneOrMoreNode.cpp"
-#include "../ast/optionalNode.cpp"
-#include "../ast/peekNode.cpp"
-#include "../ast/popNode.cpp"
-#include "../ast/pushNode.cpp"
-#include "../ast/regexNode.cpp"
-#include "../ast/sequenceNode.cpp"
-#include "../ast/stringNode.cpp"
-#include "../ast/swapNode.cpp"
-#include "../ast/testNode.cpp"
-#include "../ast/testNotNode.cpp"
-#include "../ast/zeroOrMoreNode.cpp"
-#include "../ast/recursionNode.cpp"
-#include "../arg.h"
-#include <type_traits>
-#include <functional>
 
 parser::parser()
 {
