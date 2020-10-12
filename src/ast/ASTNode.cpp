@@ -1,5 +1,9 @@
 #include "ASTNode.h"
 
+ASTNode::ASTNode() {
+    id = "AST";
+}
+
 template <typename... Args>
 void ASTNode::populate(std::string type, ASTNode *node, Args... nodes)
 {
@@ -101,6 +105,10 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
+void *anyNode::act(stack *values) {
+    return nullptr;
+}
+
 template <typename... Args>
 anyOfNode::anyOfNode(Args... nodes)
 {
@@ -123,6 +131,10 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str)
         }
     }
     return false;
+}
+
+void *anyOfNode::act(stack *values) {
+    return nullptr;
 }
 
 charRangeNode::charRangeNode(char begin, char end)
@@ -157,6 +169,10 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
+void *charRangeNode::act(stack *values) {
+    return nullptr;
+}
+
 chNode::chNode(char ch)
 {
     id = "char";
@@ -174,6 +190,10 @@ bool chNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
+void *chNode::act(stack *values) {
+    return nullptr;
+}
+
 emptyNode::emptyNode()
 {
     id = "empty";
@@ -184,6 +204,10 @@ bool emptyNode::parse(std::string *source, linkNode *path, std::string str)
     return true;
 }
 
+void *emptyNode::act(stack *values) {
+    return nullptr;
+}
+
 EOINode::EOINode()
 {
     id = "EOI";
@@ -192,6 +216,10 @@ EOINode::EOINode()
 bool EOINode::parse(std::string *source, linkNode *path, std::string str)
 {
     return (source->length() == 0);
+}
+
+void *EOINode::act(stack *values) {
+    return nullptr;
 }
 
 template <typename... Args>
@@ -216,6 +244,10 @@ bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
         }
     }
     return false;
+}
+
+void *firstOfNode::act(stack *values) {
+    return nullptr;
 }
 
 ignoreCaseNode::ignoreCaseNode(char ch)
@@ -268,6 +300,10 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
         }
         return false;
     }
+}
+
+void *ignoreCaseNode::act(stack *values) {
+    return nullptr;
 }
 
 matchNode::matchNode()
@@ -329,6 +365,10 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
+void *noneOfNode::act(stack *values) {
+    return nullptr;
+}
+
 nothingNode::nothingNode()
 {
     id = "nothing";
@@ -337,6 +377,10 @@ nothingNode::nothingNode()
 bool nothingNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     return false;
+}
+
+void *nothingNode::act(stack *values) {
+    return nullptr;
 }
 
 oneOrMoreNode::oneOrMoreNode(ASTNode *node)
@@ -364,6 +408,10 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
+void *oneOrMoreNode::act(stack *values) {
+    return nullptr;
+}
+
 optionalNode::optionalNode(ASTNode *node)
 {
     populate("optional", node);
@@ -373,6 +421,10 @@ bool optionalNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     link->getChild()->parse(source, path, str);
     return true;
+}
+
+void *optionalNode::act(stack *values) {
+    return nullptr;
 }
 
 peekNode::peekNode()
@@ -539,6 +591,10 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
     return test;
 }
 
+void *recursionNode::act(stack *values) {
+    return nullptr;
+}
+
 regexNode::regexNode(std::string str)
 {
     id = "regex";
@@ -558,6 +614,10 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
         return true;
     }
     return false;
+}
+
+void *regexNode::act(stack *values) {
+    return nullptr;
 }
 
 template <typename... Args>
@@ -602,6 +662,10 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
+void *sequenceNode::act(stack *values) {
+    return nullptr;
+}
+
 stringNode::stringNode(std::string str)
 {
     id = "string";
@@ -617,6 +681,10 @@ bool stringNode::parse(std::string *source, linkNode *path, std::string *match)
         return true;
     }
     return false;
+}
+
+void *stringNode::act(stack *values) {
+    return nullptr;
 }
 
 swapNode::swapNode()
@@ -665,6 +733,10 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
+void *testNode::act(stack *values) {
+    return nullptr;
+}
+
 testNotNode::testNotNode(ASTNode *node)
 {
     populate("testNot", node);
@@ -684,6 +756,10 @@ bool testNotNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     delete dummy;
     return true;
+}
+
+void *testNotNode::act(stack *values) {
+    return nullptr;
 }
 
 zeroOrMoreNode::zeroOrMoreNode(ASTNode *node)
@@ -709,4 +785,8 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
     } while (link->getChild()->parse(source, path, blank));
     *str += *blank;
     return true;
+}
+
+void *zeroOrMoreNode::act(stack *values) {
+    return nullptr;
 }

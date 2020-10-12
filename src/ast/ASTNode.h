@@ -14,9 +14,10 @@
 class ASTNode
 {
 public:
-    virtual bool parse(std::string *source, linkNode *path, std::string *str);
-    virtual void *act(stack *values);
+    virtual bool parse(std::string *source, linkNode *path, std::string *str) {};
+    virtual void *act(stack *values) {};
     std::string getId();
+    ASTNode();
 
 protected:
     std::string id;
@@ -38,6 +39,7 @@ class anyNode : public ASTNode
 public:
     anyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class anyOfNode : public ASTNode
@@ -46,14 +48,7 @@ public:
     template <typename... Args>
     anyOfNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
-};
-
-class charRangeNode : public ASTNode
-{
-public:
-    charRangeNode(char begin, char end);
-    charRangeNode(chNode *begin, chNode *end);
-    bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class chNode : public ASTNode
@@ -62,6 +57,16 @@ public:
     char ch;
     chNode(char ch);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
+};
+
+class charRangeNode : public ASTNode
+{
+public:
+    charRangeNode(char begin, char end);
+    charRangeNode(chNode *begin, chNode *end);
+    bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class emptyNode : public ASTNode
@@ -69,6 +74,7 @@ class emptyNode : public ASTNode
 public:
     emptyNode();
     bool parse(std::string *source, linkNode *path, std::string str);
+    void *act(stack *values);
 };
 
 class EOINode : public ASTNode
@@ -76,6 +82,7 @@ class EOINode : public ASTNode
 public:
     EOINode();
     bool parse(std::string *source, linkNode *path, std::string str);
+    void *act(stack *values);
 };
 
 class firstOfNode : public ASTNode
@@ -84,6 +91,16 @@ public:
     template <typename... Args>
     firstOfNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
+};
+
+class stringNode : public ASTNode
+{
+public:
+    std::string str;
+    stringNode(std::string str);
+    bool parse(std::string *source, linkNode *path, std::string *match);
+    void *act(stack *values);
 };
 
 class ignoreCaseNode : public ASTNode
@@ -94,6 +111,7 @@ public:
     ignoreCaseNode(std::string str);
     ignoreCaseNode(stringNode *str);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class matchNode : public ASTNode
@@ -113,6 +131,7 @@ public:
     template <typename... Args>
     noneOfNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class nothingNode : public ASTNode
@@ -120,6 +139,7 @@ class nothingNode : public ASTNode
 public:
     nothingNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class oneOrMoreNode : public ASTNode
@@ -127,6 +147,7 @@ class oneOrMoreNode : public ASTNode
 public:
     oneOrMoreNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class optionalNode : public ASTNode
@@ -134,6 +155,7 @@ class optionalNode : public ASTNode
 public:
     optionalNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class peekNode : public ASTNode
@@ -182,6 +204,7 @@ public:
     template <typename... Args>
     recursionNode(std::function<rule *(arg *)> func, Args... Arg);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 
 protected:
     std::function<rule *(arg *)> argFunc;
@@ -196,6 +219,7 @@ public:
     std::string str;
     regexNode(std::string str);
     bool parse(std::string *source, linkNode *path, std::string *last);
+    void *act(stack *values);
 };
 
 class sequenceNode : public ASTNode
@@ -204,14 +228,7 @@ public:
     template <typename... Args>
     sequenceNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
-};
-
-class stringNode : public ASTNode
-{
-public:
-    std::string str;
-    stringNode(std::string str);
-    bool parse(std::string *source, linkNode *path, std::string *match);
+    void *act(stack *values);
 };
 
 class swapNode : public ASTNode
@@ -227,6 +244,7 @@ class testNode : public ASTNode
 public:
     testNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class testNotNode : public ASTNode
@@ -234,6 +252,7 @@ class testNotNode : public ASTNode
 public:
     testNotNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 
 class zeroOrMoreNode : public ASTNode
@@ -241,5 +260,6 @@ class zeroOrMoreNode : public ASTNode
 public:
     zeroOrMoreNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
 };
 #endif
