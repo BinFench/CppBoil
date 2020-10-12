@@ -1,8 +1,7 @@
-#ifndef RULE_H
-#define RULE_H
-
 class ASTNode;
 
+#ifndef RULE_H
+#define RULE_H
 class rule {
     public:
         rule(ASTNode *node);

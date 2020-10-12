@@ -1,5 +1,4 @@
 #include "linkNode.h"
-#include "ASTNode.h"
 
 linkNode::linkNode() {
     hasChild = false;
