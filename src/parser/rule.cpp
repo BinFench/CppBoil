@@ -1,7 +1,7 @@
 #include "rule.h"
 
-rule::rule(ASTNode *node) {
-    node = node;
+rule::rule(ASTNode *nnode) {
+    node = nnode;
 }
 
 ASTNode *rule::getNode() {

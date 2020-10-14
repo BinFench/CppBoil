@@ -7,7 +7,7 @@ OBJ = parser/parser.o ast/ASTNode.o ast/linkNode.o parser/rule.o stack/stack.o s
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 test.cpp: $(OBJ)
-	$(CC) $@ $^ $(CFLAGS)
+	$(CC) -g $@ $^ $(CFLAGS)
 
 clean:
 	rm -rf *.o

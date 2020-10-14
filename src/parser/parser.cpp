@@ -8,8 +8,9 @@ parser::parser()
 bool parser::parse(std::string source, rule *root)
 {
     linkNode *parsePath = new linkNode();
-    std::string *str;
-    if (((ASTNode *)(root->getNode()))->parse(&source, parsePath, str))
+    std::string *str = new std::string();
+    ASTNode *node = root->getNode();
+    if (node->parse(&source, parsePath, str))
     {
         if (!hasStack)
         {
@@ -23,11 +24,13 @@ bool parser::parse(std::string source, rule *root)
         hasStack = true;
 
         linkNode *current = parsePath;
-        current->getChild()->act(values);
-        while (current->hasSibling)
-        {
-            current = current->getSibling();
+        if (current->hasChild) {
             current->getChild()->act(values);
+            while (current->hasSibling)
+            {
+                current = current->getSibling();
+                current->getChild()->act(values);
+            }
         }
 
         delete parsePath;

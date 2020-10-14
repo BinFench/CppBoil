@@ -173,10 +173,10 @@ void *charRangeNode::act(stack *values) {
     return nullptr;
 }
 
-chNode::chNode(char ch)
+chNode::chNode(char nch)
 {
     id = "char";
-    ch = ch;
+    ch = nch;
 }
 
 bool chNode::parse(std::string *source, linkNode *path, std::string *str)
@@ -475,12 +475,12 @@ void *popNode::act(stack *values)
     return values->pop();
 }
 
-pushNode::pushNode(std::function<void *(arg *)> func, arg *Arg)
+pushNode::pushNode(std::function<void *(arg *)> func, arg *nArg)
 {
     id = "push";
     which = "func";
     argFunc = func;
-    Arg = Arg;
+    Arg = nArg;
     hasArgs = true;
 }
 
@@ -490,11 +490,11 @@ pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg)
     pushNode(func, new arg(Arg...));
 }
 
-pushNode::pushNode(std::function<void *()> func)
+pushNode::pushNode(std::function<void *()> nfunc)
 {
     id = "push";
     which = "func";
-    func = func;
+    func = nfunc;
     Arg = Arg;
     hasArgs = false;
 }
@@ -555,16 +555,16 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-recursionNode::recursionNode(std::function<rule *()> func)
+recursionNode::recursionNode(std::function<rule *()> nfunc)
 {
-    func = func;
+    func = nfunc;
     hasArgs = false;
 }
 
-recursionNode::recursionNode(std::function<rule *(arg *)> func, arg *Arg)
+recursionNode::recursionNode(std::function<rule *(arg *)> func, arg *nArg)
 {
     argFunc = func;
-    Arg = Arg;
+    Arg = nArg;
     hasArgs = true;
 }
 
@@ -595,10 +595,10 @@ void *recursionNode::act(stack *values) {
     return nullptr;
 }
 
-regexNode::regexNode(std::string str)
+regexNode::regexNode(std::string nstr)
 {
     id = "regex";
-    str = str;
+    str = nstr;
 }
 
 bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
@@ -666,10 +666,10 @@ void *sequenceNode::act(stack *values) {
     return nullptr;
 }
 
-stringNode::stringNode(std::string str)
+stringNode::stringNode(std::string nstr)
 {
     id = "string";
-    str = str;
+    str = nstr;
 }
 
 bool stringNode::parse(std::string *source, linkNode *path, std::string *match)
