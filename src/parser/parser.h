@@ -25,8 +25,10 @@ public:
     rule *any();
     template <typename... Args>
     rule *anyOf(Args... rules);
-    template <typename T, typename U>
-    rule *charRange(T begin, U end);
+    rule *charRange(char begin, char end);
+    rule *charRange(rule *begin, char end);
+    rule *charRange(char begin, rule *end);
+    rule *charRange(rule *begin, rule *end);
     rule *ch(char cha);
     rule *empty();
     rule *EOI();
@@ -68,36 +70,10 @@ rule *parser::anyOf(Args... rules)
     return new rule(new anyOfNode(makeNode(rules)...));
 }
 
-template <typename T, typename U>
-rule *parser::charRange(T begin, U end)
-{
-    chNode *a;
-    chNode *b;
-    if (std::is_same<T, char>::value)
-    {
-        a = new chNode(begin);
-    }
-    else if (std::is_same<T, chNode>::value)
-    {
-        a = begin;
-    }
-
-    if (std::is_same<U, char>::value)
-    {
-        b = new chNode(end);
-    }
-    else if (std::is_same<U, chNode>::value)
-    {
-        b = end;
-    }
-
-    return new rule(new charRangeNode(a, b));
-}
-
 template <typename... Args>
 rule *parser::firstOf(Args... rules)
 {
-    return new rule(new firstOfNode((rules->getNode())...));
+    return new rule(new firstOfNode(makeNode(rules)...));
 };
 
 template <typename T>
@@ -109,13 +85,13 @@ rule *parser::ignoreCase(T text)
 template <typename... Args>
 rule *parser::noneOf(Args... rules)
 {
-    return new rule(new noneOfNode((rules->getNode())...));
+    return new rule(new noneOfNode(makeNode(rules)...));
 }
 
 template <typename... Args>
 rule *parser::oneOrMore(Args... rules)
 {
-    return new rule(new oneOrMoreNode((rules->getNode())...));
+    return new rule(new oneOrMoreNode(makeNode(rules)...));
 }
 
 template <typename... Args>
@@ -127,13 +103,13 @@ rule *parser::push(std::function<void *(arg *)> func, Args... Arg)
 template <typename... Args>
 rule *parser::sequence(Args... rules)
 {
-    return new rule(new sequenceNode((rules->getNode())...));
+    return new rule(new sequenceNode(makeNode(rules)...));
 }
 
 template <typename... Args>
 rule *parser::zeroOrMore(Args... rules)
 {
-    return new rule(new zeroOrMoreNode((rules->getNode())...));
+    return new rule(new zeroOrMoreNode(makeNode(rules)...));
 }
 
 template <typename... Args>

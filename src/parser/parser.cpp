@@ -74,6 +74,26 @@ rule *parser::ch(char cha)
     return new rule(new chNode(cha));
 }
 
+rule *parser::charRange(char begin, char end)
+{
+    return new rule(new charRangeNode(begin, end));
+}
+
+rule *parser::charRange(rule *begin, char end)
+{
+    return new rule(new charRangeNode((chNode *)begin->getNode(), end));
+}
+
+rule *parser::charRange(char begin, rule *end)
+{
+    return new rule(new charRangeNode(begin, (chNode *)end->getNode()));
+}
+
+rule *parser::charRange(rule *begin, rule *end)
+{
+    return new rule(new charRangeNode((chNode *)begin->getNode(), (chNode *)end->getNode()));
+}
+
 rule *parser::empty()
 {
     return new rule(new emptyNode());

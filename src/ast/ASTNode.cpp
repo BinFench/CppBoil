@@ -1,5 +1,6 @@
 #include "ASTNode.h"
 #include "../arg.h"
+#include <iostream>
 
 ASTNode::ASTNode()
 {
@@ -84,6 +85,16 @@ void *anyOfNode::act(stack *values)
 charRangeNode::charRangeNode(char begin, char end)
 {
     populate("charRange", new chNode(begin), new chNode(end));
+}
+
+charRangeNode::charRangeNode(chNode *begin, char end)
+{
+    populate("charRange", begin, new chNode(end));
+}
+
+charRangeNode::charRangeNode(char begin, chNode *end)
+{
+    populate("charRange", new chNode(begin), end);
 }
 
 charRangeNode::charRangeNode(chNode *begin, chNode *end)
@@ -277,7 +288,7 @@ void *matchNode::act(stack *values)
 
 bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::string *blank;
+    std::string *blank = new std::string;
     *blank = *str;
     linkNode *dummy = new linkNode();
     linkNode *current = link;
@@ -534,17 +545,22 @@ regexNode::regexNode(std::string nstr)
 
 bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
 {
-    std::regex rgx(str);
-    std::smatch match;
-    const std::string eval = *source;
+    try {
+        std::regex rgx(str);
+        std::smatch match;
+        const std::string eval = *source;
 
-    if (std::regex_search(eval.begin(), eval.end(), match, rgx) && source->find(match[1]) == 0)
-    {
-        *last += source->substr(0, match[1].length());
-        source->erase(0, match[1].length());
-        return true;
+        if (std::regex_search(eval.begin(), eval.end(), match, rgx) && source->find(match[1]) == 0)
+        {
+            *last += source->substr(0, match[1].length());
+            source->erase(0, match[1].length());
+            return true;
+        }
+        return false;
+    } catch (const std::regex_error& e) {
+        std::cout << "regex_error caught: " << e.what() << std::endl;
+        return false;
     }
-    return false;
 }
 
 void *regexNode::act(stack *values)
@@ -557,9 +573,9 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
     linkNode *current = link;
     std::string copy = *source;
     linkNode *dummy = new linkNode();
-    std::string *blank;
-    std::string *temp;
-    std::string *ret;
+    std::string *blank = new std::string;
+    std::string *temp = new std::string;
+    std::string *ret = new std::string;
     *blank = *str;
     if (!current->getChild()->parse(&copy, dummy, blank))
     {
@@ -649,7 +665,7 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     std::string copy = *source;
     linkNode *dummy = new linkNode();
-    std::string *temp;
+    std::string *temp = new std::string;
     *temp = *str;
 
     if (link->getChild()->parse(&copy, dummy, temp))
@@ -675,7 +691,7 @@ bool testNotNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     std::string copy = *source;
     linkNode *dummy = new linkNode();
-    std::string *temp;
+    std::string *temp = new std::string;
     *temp = *str;
 
     if (link->getChild()->parse(&copy, dummy, temp))

@@ -134,6 +134,8 @@ class charRangeNode : public ASTNode
 {
 public:
     charRangeNode(char begin, char end);
+    charRangeNode(chNode *begin, char end);
+    charRangeNode(char begin, chNode *end);
     charRangeNode(chNode *begin, chNode *end);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
