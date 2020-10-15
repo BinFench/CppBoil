@@ -1,32 +1,40 @@
 #include "linkNode.h"
 
-linkNode::linkNode() {
+linkNode::linkNode()
+{
     hasChild = false;
     hasSibling = false;
 }
 
-void linkNode::append(linkNode* sibling) {
+void linkNode::append(linkNode *nsibling)
+{
     hasSibling = true;
-    sibling = sibling;
+    sibling = nsibling;
 }
 
-void linkNode::attach(ASTNode* child) {
+void linkNode::attach(ASTNode *child)
+{
     hasChild = true;
     ASTChildren = child;
 }
 
-ASTNode *linkNode::getChild() {
+ASTNode *linkNode::getChild()
+{
     return ASTChildren;
 }
 
-linkNode *linkNode::getSibling() {
+linkNode *linkNode::getSibling()
+{
     return sibling;
 }
 
-linkNode *linkNode::getTail() {
-    if (hasSibling) {
+linkNode *linkNode::getTail()
+{
+    if (hasSibling)
+    {
         linkNode *current = getSibling();
-        while (current->hasSibling) {
+        while (current->hasSibling)
+        {
             current = current->getSibling();
         }
         return current;

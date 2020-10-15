@@ -1,61 +1,9 @@
 #include "ASTNode.h"
+#include "../arg.h"
 
-ASTNode::ASTNode() {
+ASTNode::ASTNode()
+{
     id = "AST";
-}
-
-template <typename... Args>
-void ASTNode::populate(std::string type, ASTNode *node, Args... nodes)
-{
-    if (id != type)
-    {
-        id = type;
-        link = new linkNode();
-        link->attach(node);
-    }
-    else
-    {
-        linkNode *sibling = new linkNode();
-        sibling->attach(node);
-        link->getTail()->append(sibling);
-    }
-    populate(type, nodes...);
-}
-
-template <typename... Args>
-void ASTNode::populate(std::string type, std::string node, Args... nodes)
-{
-    if (id != type)
-    {
-        id = type;
-        link = new linkNode();
-        link->attach(new stringNode(node));
-    }
-    else
-    {
-        linkNode *sibling = new linkNode();
-        sibling->attach(new stringNode(node));
-        link->getTail()->append(sibling);
-    }
-    populate(type, nodes...);
-}
-
-template <typename... Args>
-void ASTNode::populate(std::string type, char node, Args... nodes)
-{
-    if (id != type)
-    {
-        id = type;
-        link = new linkNode();
-        link->attach(new chNode(node));
-    }
-    else
-    {
-        linkNode *sibling = new linkNode();
-        sibling->attach(new chNode(node));
-        link->getTail()->append(sibling);
-    }
-    populate(type, nodes...);
 }
 
 void ASTNode::populate(std::string type, ASTNode *node)
@@ -105,14 +53,9 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *anyNode::act(stack *values) {
-    return nullptr;
-}
-
-template <typename... Args>
-anyOfNode::anyOfNode(Args... nodes)
+void *anyNode::act(stack *values)
 {
-    populate("anyOf", nodes...);
+    return nullptr;
 }
 
 bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str)
@@ -133,7 +76,8 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *anyOfNode::act(stack *values) {
+void *anyOfNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -169,7 +113,8 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *charRangeNode::act(stack *values) {
+void *charRangeNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -190,7 +135,8 @@ bool chNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *chNode::act(stack *values) {
+void *chNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -204,7 +150,8 @@ bool emptyNode::parse(std::string *source, linkNode *path, std::string str)
     return true;
 }
 
-void *emptyNode::act(stack *values) {
+void *emptyNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -218,14 +165,9 @@ bool EOINode::parse(std::string *source, linkNode *path, std::string str)
     return (source->length() == 0);
 }
 
-void *EOINode::act(stack *values) {
-    return nullptr;
-}
-
-template <typename... Args>
-firstOfNode::firstOfNode(Args... nodes)
+void *EOINode::act(stack *values)
 {
-    populate("firstOf", nodes...);
+    return nullptr;
 }
 
 bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
@@ -246,7 +188,8 @@ bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *firstOfNode::act(stack *values) {
+void *firstOfNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -302,7 +245,8 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
     }
 }
 
-void *ignoreCaseNode::act(stack *values) {
+void *ignoreCaseNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -329,12 +273,6 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str)
 void *matchNode::act(stack *values)
 {
     return &match;
-}
-
-template <typename... Args>
-noneOfNode::noneOfNode(Args... nodes)
-{
-    populate("noneOf", nodes...);
 }
 
 bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
@@ -365,7 +303,8 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *noneOfNode::act(stack *values) {
+void *noneOfNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -379,7 +318,8 @@ bool nothingNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *nothingNode::act(stack *values) {
+void *nothingNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -408,7 +348,8 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *oneOrMoreNode::act(stack *values) {
+void *oneOrMoreNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -423,7 +364,8 @@ bool optionalNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *optionalNode::act(stack *values) {
+void *optionalNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -482,12 +424,6 @@ pushNode::pushNode(std::function<void *(arg *)> func, arg *nArg)
     argFunc = func;
     Arg = nArg;
     hasArgs = true;
-}
-
-template <typename... Args>
-pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg)
-{
-    pushNode(func, new arg(Arg...));
 }
 
 pushNode::pushNode(std::function<void *()> nfunc)
@@ -568,12 +504,6 @@ recursionNode::recursionNode(std::function<rule *(arg *)> func, arg *nArg)
     hasArgs = true;
 }
 
-template <typename... Args>
-recursionNode::recursionNode(std::function<rule *(arg *)> func, Args... Arg)
-{
-    recursionNode(func, new arg(Arg...));
-}
-
 bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     rule *eval;
@@ -591,7 +521,8 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
     return test;
 }
 
-void *recursionNode::act(stack *values) {
+void *recursionNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -616,14 +547,9 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
     return false;
 }
 
-void *regexNode::act(stack *values) {
-    return nullptr;
-}
-
-template <typename... Args>
-sequenceNode::sequenceNode(Args... nodes)
+void *regexNode::act(stack *values)
 {
-    populate("sequence", nodes...);
+    return nullptr;
 }
 
 bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
@@ -662,7 +588,8 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *sequenceNode::act(stack *values) {
+void *sequenceNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -683,7 +610,8 @@ bool stringNode::parse(std::string *source, linkNode *path, std::string *match)
     return false;
 }
 
-void *stringNode::act(stack *values) {
+void *stringNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -733,7 +661,8 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
-void *testNode::act(stack *values) {
+void *testNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -758,7 +687,8 @@ bool testNotNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
-void *testNotNode::act(stack *values) {
+void *testNotNode::act(stack *values)
+{
     return nullptr;
 }
 
@@ -787,6 +717,7 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
     return true;
 }
 
-void *zeroOrMoreNode::act(stack *values) {
+void *zeroOrMoreNode::act(stack *values)
+{
     return nullptr;
 }

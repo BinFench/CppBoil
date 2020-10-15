@@ -52,6 +52,7 @@ void *stack::pop()
         size--;
         return item;
     }
+    return nullptr;
 }
 
 void stack::swap()
@@ -72,4 +73,5 @@ void *stack::peek()
     {
         return head->item;
     }
+    return nullptr;
 }

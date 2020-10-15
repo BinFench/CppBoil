@@ -1,12 +1,16 @@
 #include "../ast/ASTNode.h"
 #include "rule.h"
-#include "../stack/stack.h"
 #include "../arg.h"
+#include "../stack/stack.h"
 #include <string>
 #include <functional>
 
 #ifndef PARSER_H
 #define PARSER_H
+
+ASTNode *makeNode(char ch);
+ASTNode *makeNode(std::string str);
+ASTNode *makeNode(rule *Rule);
 
 class parser
 {
@@ -57,5 +61,85 @@ public:
     rule *recursion(std::function<rule *(arg *)> func, Args... Arg);
     rule *recursion(std::function<rule *()> func);
 };
+
+template <typename... Args>
+rule *parser::anyOf(Args... rules)
+{
+    return new rule(new anyOfNode(makeNode(rules)...));
+}
+
+template <typename T, typename U>
+rule *parser::charRange(T begin, U end)
+{
+    chNode *a;
+    chNode *b;
+    if (std::is_same<T, char>::value)
+    {
+        a = new chNode(begin);
+    }
+    else if (std::is_same<T, chNode>::value)
+    {
+        a = begin;
+    }
+
+    if (std::is_same<U, char>::value)
+    {
+        b = new chNode(end);
+    }
+    else if (std::is_same<U, chNode>::value)
+    {
+        b = end;
+    }
+
+    return new rule(new charRangeNode(a, b));
+}
+
+template <typename... Args>
+rule *parser::firstOf(Args... rules)
+{
+    return new rule(new firstOfNode((rules->getNode())...));
+};
+
+template <typename T>
+rule *parser::ignoreCase(T text)
+{
+    return new rule(new ignoreCaseNode(text));
+}
+
+template <typename... Args>
+rule *parser::noneOf(Args... rules)
+{
+    return new rule(new noneOfNode((rules->getNode())...));
+}
+
+template <typename... Args>
+rule *parser::oneOrMore(Args... rules)
+{
+    return new rule(new oneOrMoreNode((rules->getNode())...));
+}
+
+template <typename... Args>
+rule *parser::push(std::function<void *(arg *)> func, Args... Arg)
+{
+    return push(func, new arg(Arg...));
+}
+
+template <typename... Args>
+rule *parser::sequence(Args... rules)
+{
+    return new rule(new sequenceNode((rules->getNode())...));
+}
+
+template <typename... Args>
+rule *parser::zeroOrMore(Args... rules)
+{
+    return new rule(new zeroOrMoreNode((rules->getNode())...));
+}
+
+template <typename... Args>
+rule *recursion(std::function<rule *(arg *)> func, Args... Arg)
+{
+    return recursion(func, new arg(Arg...));
+}
 
 #endif

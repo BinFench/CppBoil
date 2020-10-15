@@ -1,8 +1,4 @@
 #include "arg.h"
-#include "stack/stackLink.h"
-#include "parser/rule.h"
-#include "ast/ASTNode.h"
-#include <type_traits>
 
 int arg::getSize()
 {
@@ -27,55 +23,5 @@ void *arg::get(int i)
 
         return toRet;
     }
+    return nullptr;
 }
-
-template <typename... Args>
-arg::arg(Args... args)
-{
-    size = 0;
-    populate(link, args...);
-}
-
-template <typename T, typename... Args>
-void arg::populate(stackLink *current, T par, Args... Arg)
-{
-    stackLink *add = new stackLink();
-    add->item = par;
-
-    if (std::is_same<T, rule>::value)
-    {
-        add->isRule = true;
-    }
-
-    if (size == 0)
-    {
-        current = add;
-    }
-    else
-    {
-        current->link = add;
-    }
-
-    populate(add, Arg...);
-};
-
-template <typename T>
-void arg::populate(stackLink *current, T par)
-{
-    stackLink *add = new stackLink();
-    add->item = par;
-
-    if (std::is_same<T, rule>::value)
-    {
-        add->isRule = true;
-    }
-
-    if (size == 0)
-    {
-        current = add;
-    }
-    else
-    {
-        current->link = add;
-    }
-};

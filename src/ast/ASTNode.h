@@ -1,7 +1,6 @@
 #include "linkNode.h"
 #include "../stack/stack.h"
 #include "../parser/rule.h"
-#include "../arg.h"
 #include <type_traits>
 #include <algorithm>
 #include <functional>
@@ -11,11 +10,13 @@
 #ifndef ASTNODE_H
 #define ASTNODE_H
 
+class arg;
+
 class ASTNode
 {
 public:
-    virtual bool parse(std::string *source, linkNode *path, std::string *str) {};
-    virtual void *act(stack *values) {};
+    virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
+    virtual void *act(stack *values) { return nullptr; };
     std::string getId();
     ASTNode();
 
@@ -34,6 +35,78 @@ protected:
     void populate(std::string type, char node);
 };
 
+class chNode : public ASTNode
+{
+public:
+    char ch;
+    chNode(char ch);
+    bool parse(std::string *source, linkNode *path, std::string *str);
+    void *act(stack *values);
+};
+
+class stringNode : public ASTNode
+{
+public:
+    std::string str;
+    stringNode(std::string str);
+    bool parse(std::string *source, linkNode *path, std::string *match);
+    void *act(stack *values);
+};
+
+template <typename... Args>
+void ASTNode::populate(std::string type, ASTNode *node, Args... nodes)
+{
+    if (id != type)
+    {
+        id = type;
+        link = new linkNode();
+        link->attach(node);
+    }
+    else
+    {
+        linkNode *sibling = new linkNode();
+        sibling->attach(node);
+        link->getTail()->append(sibling);
+    }
+    populate(type, nodes...);
+}
+
+template <typename... Args>
+void ASTNode::populate(std::string type, std::string node, Args... nodes)
+{
+    if (id != type)
+    {
+        id = type;
+        link = new linkNode();
+        link->attach(new stringNode(node));
+    }
+    else
+    {
+        linkNode *sibling = new linkNode();
+        sibling->attach(new stringNode(node));
+        link->getTail()->append(sibling);
+    }
+    populate(type, nodes...);
+}
+
+template <typename... Args>
+void ASTNode::populate(std::string type, char node, Args... nodes)
+{
+    if (id != type)
+    {
+        id = type;
+        link = new linkNode();
+        link->attach(new chNode(node));
+    }
+    else
+    {
+        linkNode *sibling = new linkNode();
+        sibling->attach(new chNode(node));
+        link->getTail()->append(sibling);
+    }
+    populate(type, nodes...);
+}
+
 class anyNode : public ASTNode
 {
 public:
@@ -51,14 +124,11 @@ public:
     void *act(stack *values);
 };
 
-class chNode : public ASTNode
+template <typename... Args>
+anyOfNode::anyOfNode(Args... nodes)
 {
-public:
-    char ch;
-    chNode(char ch);
-    bool parse(std::string *source, linkNode *path, std::string *str);
-    void *act(stack *values);
-};
+    populate("anyOf", nodes...);
+}
 
 class charRangeNode : public ASTNode
 {
@@ -94,14 +164,11 @@ public:
     void *act(stack *values);
 };
 
-class stringNode : public ASTNode
+template <typename... Args>
+firstOfNode::firstOfNode(Args... nodes)
 {
-public:
-    std::string str;
-    stringNode(std::string str);
-    bool parse(std::string *source, linkNode *path, std::string *match);
-    void *act(stack *values);
-};
+    populate("firstOf", nodes...);
+}
 
 class ignoreCaseNode : public ASTNode
 {
@@ -133,6 +200,12 @@ public:
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
+
+template <typename... Args>
+noneOfNode::noneOfNode(Args... nodes)
+{
+    populate("noneOf", nodes...);
+}
 
 class nothingNode : public ASTNode
 {
@@ -196,6 +269,12 @@ protected:
     stack *temp;
 };
 
+template <typename... Args>
+pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg)
+{
+    pushNode(func, new arg(Arg...));
+}
+
 class recursionNode : public ASTNode
 {
 public:
@@ -212,6 +291,12 @@ protected:
     bool hasArgs;
     arg *Arg;
 };
+
+template <typename... Args>
+recursionNode::recursionNode(std::function<rule *(arg *)> func, Args... Arg)
+{
+    recursionNode(func, new arg(Arg...));
+}
 
 class regexNode : public ASTNode
 {
@@ -230,6 +315,12 @@ public:
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
+
+template <typename... Args>
+sequenceNode::sequenceNode(Args... nodes)
+{
+    populate("sequence", nodes...);
+}
 
 class swapNode : public ASTNode
 {
