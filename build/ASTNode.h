@@ -1,6 +1,6 @@
 #include "linkNode.h"
-#include "../stack/stack.h"
-#include "../parser/rule.h"
+#include "stack.h"
+#include "rule.h"
 #include <type_traits>
 #include <algorithm>
 #include <functional>
@@ -9,7 +9,6 @@
 
 #ifndef ASTNODE_H
 #define ASTNODE_H
-
 class arg;
 
 class ASTNode

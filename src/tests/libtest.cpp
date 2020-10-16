@@ -1,4 +1,4 @@
-#include "CBoil"
+#include <CBoil>
 #include <iostream>
 
 int main()
@@ -239,7 +239,7 @@ int main()
     {
         std::cout << "Failed 26" << std::endl;
     }
-    if (newParser->parse("pass", newParser->regex("*ass")))
+    if (newParser->parse("pass", newParser->regex(".*ass")))
     {
         std::cout << "Passed" << std::endl;
         passed++;
@@ -248,7 +248,7 @@ int main()
     {
         std::cout << "Failed 27" << std::endl;
     }
-    if (!newParser->parse("fail", newParser->regex("*ass")))
+    if (!newParser->parse("fail", newParser->regex(".*ass")))
     {
         std::cout << "Passed" << std::endl;
         passed++;

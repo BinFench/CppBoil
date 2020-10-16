@@ -156,9 +156,8 @@ emptyNode::emptyNode()
     id = "empty";
 }
 
-bool emptyNode::parse(std::string *source, linkNode *path, std::string str)
+bool emptyNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::cout << "uhhh" << std::endl;
     return true;
 }
 
@@ -172,9 +171,8 @@ EOINode::EOINode()
     id = "EOI";
 }
 
-bool EOINode::parse(std::string *source, linkNode *path, std::string str)
+bool EOINode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::cout << "hmm" << std::endl;
     return (source->length() == 0);
 }
 
