@@ -19,7 +19,7 @@ void ASTNode::populate(std::string type, ASTNode *node)
     {
         linkNode *sibling = new linkNode();
         sibling->attach(node);
-        link->append(sibling);
+        link->getTail()->append(sibling);
     }
 }
 
@@ -158,6 +158,7 @@ emptyNode::emptyNode()
 
 bool emptyNode::parse(std::string *source, linkNode *path, std::string str)
 {
+    std::cout << "uhhh" << std::endl;
     return true;
 }
 
@@ -173,6 +174,7 @@ EOINode::EOINode()
 
 bool EOINode::parse(std::string *source, linkNode *path, std::string str)
 {
+    std::cout << "hmm" << std::endl;
     return (source->length() == 0);
 }
 
@@ -545,7 +547,8 @@ regexNode::regexNode(std::string nstr)
 
 bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
 {
-    try {
+    try
+    {
         std::regex rgx(str);
         std::smatch match;
         const std::string eval = *source;
@@ -557,7 +560,9 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
             return true;
         }
         return false;
-    } catch (const std::regex_error& e) {
+    }
+    catch (const std::regex_error &e)
+    {
         std::cout << "regex_error caught: " << e.what() << std::endl;
         return false;
     }
