@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <iostream>
 
 ASTNode *makeNode(char ch)
 {
@@ -41,6 +42,7 @@ bool parser::parse(std::string source, rule *root)
         linkNode *current = parsePath;
         if (current->hasChild)
         {
+            std::cout << "Act on stack" << std::endl;
             current->getChild()->act(values);
             while (current->hasSibling)
             {
@@ -56,11 +58,13 @@ bool parser::parse(std::string source, rule *root)
 
     delete parsePath;
     delete root;
+    std::cout << "PARSER FAIL" << std::endl;
     return false;
 }
 
 void *parser::getResult()
 {
+    std::cout << "This gets called" << std::endl;
     return values->pop();
 }
 

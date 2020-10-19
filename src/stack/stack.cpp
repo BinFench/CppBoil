@@ -1,4 +1,5 @@
 #include "stack.h"
+#include <iostream>
 
 stack::stack()
 {
@@ -45,6 +46,7 @@ void *stack::pop()
 {
     if (size > 0)
     {
+        std::cout << "Item in stack" << std::endl;
         stackLink *link = head;
         head = head->link;
         void *item = link->item;
@@ -52,6 +54,7 @@ void *stack::pop()
         size--;
         return item;
     }
+    std::cout << "Stack empty" << std::endl;
     return nullptr;
 }
 
