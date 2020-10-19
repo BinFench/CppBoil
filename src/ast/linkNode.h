@@ -10,6 +10,8 @@ class linkNode {
         void attach(ASTNode* child);
         bool hasSibling;
         bool hasChild;
+        void print();
+        void removeTail();
 
         ASTNode* getChild();
         linkNode* getSibling();

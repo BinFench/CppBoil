@@ -1,4 +1,6 @@
 #include "linkNode.h"
+#include "ASTNode.h"
+#include <iostream>
 
 linkNode::linkNode()
 {
@@ -40,4 +42,32 @@ linkNode *linkNode::getTail()
         return current;
     }
     return this;
+}
+
+void linkNode::print() {
+    std::cout << "In link" << std::endl;
+    if (hasChild) {
+        std::cout << ASTChildren->getId() << std::endl;
+    }
+    if (hasSibling) {
+        sibling->print();
+    }
+}
+
+void linkNode::removeTail() {
+    if (hasSibling)
+    {
+        linkNode *current = getSibling();
+        linkNode *prev = this;
+        while (current->hasSibling)
+        {
+            prev = current;
+            current = current->getSibling();
+        }
+        prev->hasSibling = false;
+        if (current->hasChild) {
+            delete current->ASTChildren;
+        }
+        delete current;
+    }
 }

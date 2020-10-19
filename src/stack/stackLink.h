@@ -6,6 +6,7 @@ class stackLink {
         stackLink *link;
         bool isRule;
         void *item;
+        bool hasItem;
 
         stackLink();
 };

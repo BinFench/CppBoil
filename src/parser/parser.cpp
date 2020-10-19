@@ -26,8 +26,11 @@ bool parser::parse(std::string source, rule *root)
     linkNode *parsePath = new linkNode();
     std::string *str = new std::string();
     ASTNode *node = root->getNode();
+    parsePath->print();
     if (node->parse(&source, parsePath, str))
     {
+        parsePath->print();
+        std::cout << parsePath->hasChild << std::endl;
         if (!hasStack)
         {
             values = new stack();
@@ -40,13 +43,12 @@ bool parser::parse(std::string source, rule *root)
         hasStack = true;
 
         linkNode *current = parsePath;
-        if (current->hasChild)
-        {
-            std::cout << "Act on stack" << std::endl;
+        if (current->hasChild) {
             current->getChild()->act(values);
-            while (current->hasSibling)
-            {
-                current = current->getSibling();
+        }
+        while (current->hasSibling) {
+            current = current->getSibling();
+            if (current->hasChild) {
                 current->getChild()->act(values);
             }
         }
@@ -58,13 +60,11 @@ bool parser::parse(std::string source, rule *root)
 
     delete parsePath;
     delete root;
-    std::cout << "PARSER FAIL" << std::endl;
     return false;
 }
 
 void *parser::getResult()
 {
-    std::cout << "This gets called" << std::endl;
     return values->pop();
 }
 

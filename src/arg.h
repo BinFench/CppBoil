@@ -30,6 +30,7 @@ template <typename... Args>
 arg::arg(Args... args)
 {
     size = 0;
+    link = new stackLink();
     populate(link, args...);
 }
 
@@ -38,22 +39,26 @@ void arg::populate(stackLink *current, T par, Args... Arg)
 {
     stackLink *add = new stackLink();
     add->item = par;
+    add->hasItem = true;
 
-    if (std::is_same<T, rule>::value)
+    if (std::is_same<T, rule*>::value)
     {
         add->isRule = true;
     }
 
     if (size == 0)
     {
+        size++;
+        delete current;
         current = add;
+        populate(current, Arg...);
     }
     else
     {
+        size++;
         current->link = add;
+        populate(current->link, Arg...);
     }
-
-    populate(add, Arg...);
 };
 
 template <typename T>
@@ -75,6 +80,7 @@ void arg::populate(stackLink *current, T par)
     {
         current->link = add;
     }
+    size++;
 };
 
 #endif

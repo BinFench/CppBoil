@@ -40,8 +40,16 @@ int *divide(arg *Arg) {
 }
 
 int *toi(arg *Arg) {
+    std::cout << "This gets called" << std::endl;
     int *num;
-    *num = std::stoi(*(std::string*)Arg->get(0), nullptr, *(int*)Arg->get(1));
+    std::string *s = new std::string();
+    s = static_cast<std::string*>(Arg->get(0));
+    std::cout << "Fails here?" << std::endl;
+    std::cout << *s << std::endl;
+    std::cout << "hmm" << std::endl;
+    *num = std::stoi(*s, nullptr, 10);
+    std::cout << "uhh" << std::endl;
+    std::cout << *num << std::endl;
     return num;
 }
 
@@ -86,11 +94,10 @@ rule *calculator::Parens() {
 }
 
 rule *calculator::Number() {
-    int base = 10;
     return sequence(
             Digits(),
             push(match()),
-            push(toi, pop(), &base)
+            push(toi, pop())
     );
 }
 
@@ -431,11 +438,11 @@ int main()
         std::cout << "Failed 36" << std::endl;
     }
 
-    if (calc->parse("7+2", calc->InputLine())) {
+    if (calc->parse("2", calc->InputLine())) {
         std::cout << "Accepted" << std::endl;
         int result = *(int*)calc->getResult();
         std::cout << result << std::endl;
-        if (result == 9) {
+        if (result == 2) {
             std::cout << "Passed" << std::endl;
             passed++;
         } else {
