@@ -1,3 +1,5 @@
+#include <string>
+
 #ifndef STACKLINK_H
 #define STACKLINK_H
 
@@ -7,6 +9,7 @@ class stackLink {
         bool isRule;
         void *item;
         bool hasItem;
+        std::string test;
 
         stackLink();
 };

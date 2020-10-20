@@ -24,6 +24,8 @@ protected:
     void populate(stackLink *current, T par, Args... Arg);
     template <typename T>
     void populate(stackLink *current, T par);
+    void checkRule(stackLink *add, rule *par);
+    void checkRule(stackLink *add, void *par);
 };
 
 template <typename... Args>
@@ -31,6 +33,7 @@ arg::arg(Args... args)
 {
     size = 0;
     link = new stackLink();
+    link->test = "init";
     populate(link, args...);
 }
 
@@ -38,13 +41,10 @@ template <typename T, typename... Args>
 void arg::populate(stackLink *current, T par, Args... Arg)
 {
     stackLink *add = new stackLink();
+    add->test = "append";
     add->item = par;
     add->hasItem = true;
-
-    if (std::is_same<T, rule*>::value)
-    {
-        add->isRule = true;
-    }
+    checkRule(add, par);
 
     if (size == 0)
     {
@@ -66,14 +66,12 @@ void arg::populate(stackLink *current, T par)
 {
     stackLink *add = new stackLink();
     add->item = par;
-
-    if (std::is_same<T, rule>::value)
-    {
-        add->isRule = true;
-    }
+    add->hasItem = true;
+    checkRule(add, par);
 
     if (size == 0)
     {
+        delete current;
         current = add;
     }
     else
