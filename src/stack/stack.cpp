@@ -8,9 +8,12 @@ stack::stack()
 
 void stack::push(void *item)
 {
+    std::cout << "push item!" << std::endl;
     stackLink *link = new stackLink();
+    link->test = "stack";
     link->item = item;
     link->isRule = false;
+    link->hasItem = true;
     if (size == 0)
     {
         head = link;
@@ -26,9 +29,12 @@ void stack::push(void *item)
 
 void stack::push(rule *item)
 {
+    std::cout << "push rule!" << std::endl;
     stackLink *link = new stackLink();
+    link->test = "stack";
     link->item = item;
     link->isRule = true;
+    link->hasItem = true;
     if (size == 0)
     {
         head = link;
@@ -44,9 +50,9 @@ void stack::push(rule *item)
 
 void *stack::pop()
 {
+    std::cout << "pop!" << std::endl;
     if (size > 0)
     {
-        std::cout << "Item in stack" << std::endl;
         stackLink *link = head;
         head = head->link;
         void *item = link->item;
@@ -60,6 +66,7 @@ void *stack::pop()
 
 void stack::swap()
 {
+    std::cout << "swap!" << std::endl;
     if (size > 2)
     {
         stackLink *link1 = head;
@@ -72,6 +79,7 @@ void stack::swap()
 
 void *stack::peek()
 {
+    std::cout << "peek!" << std::endl;
     if (size > 0)
     {
         return head->item;

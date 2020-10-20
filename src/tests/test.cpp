@@ -1,8 +1,9 @@
 #include "../CBoil"
 #include <iostream>
 
-class calculator: public parser {
-    public:
+class calculator : public parser
+{
+public:
     rule *InputLine();
     rule *Expression();
     rule *Term();
@@ -15,97 +16,98 @@ class calculator: public parser {
 
 calculator *calc = new calculator();
 
-int *sum(arg *Arg) {
+int *sum(arg *Arg)
+{
     int *num;
-    *num = *(int*)Arg->get(0) + *(int*)Arg->get(1);
+    *num = *(int *)Arg->get(0) + *(int *)Arg->get(1);
     return num;
 }
 
-int *sub(arg *Arg) {
+int *sub(arg *Arg)
+{
     int *num;
-    *num = *(int*)Arg->get(0) - *(int*)Arg->get(1);
+    *num = *(int *)Arg->get(0) - *(int *)Arg->get(1);
     return num;
 }
 
-int *mult(arg *Arg) {
+int *mult(arg *Arg)
+{
     int *num;
-    *num = *(int*)Arg->get(0) * *(int*)Arg->get(1);
+    *num = *(int *)Arg->get(0) * *(int *)Arg->get(1);
     return num;
 }
 
-int *divide(arg *Arg) {
+int *divide(arg *Arg)
+{
     int *num;
-    *num = *(int*)Arg->get(0) / *(int*)Arg->get(1);
+    *num = *(int *)Arg->get(0) / *(int *)Arg->get(1);
     return num;
 }
 
-int *toi(arg *Arg) {
-    std::cout << "This gets called" << std::endl;
-    int *num;
+int *toi(arg *Arg)
+{
     std::string *s = new std::string();
-    s = static_cast<std::string*>(Arg->get(0));
-    std::cout << "Fails here?" << std::endl;
-    std::cout << *s << std::endl;
-    std::cout << "hmm" << std::endl;
+    s = static_cast<std::string *>(Arg->get(0));
+    int *num = new int();
     *num = std::stoi(*s, nullptr, 10);
-    std::cout << "uhh" << std::endl;
-    std::cout << *num << std::endl;
     return num;
 }
 
-rule *expr() {
+rule *expr()
+{
     return calc->Expression();
 }
 
-rule *calculator::InputLine() {
+rule *calculator::InputLine()
+{
     return sequence(Expression(), EOI());
 }
 
-rule *calculator::Expression() {
+rule *calculator::Expression()
+{
     return sequence(
         Term(),
         zeroOrMore(
             firstOf(
                 sequence('+', Term(), push(sum, pop(), pop())),
-                sequence('-', Term(), swap(), push(sub, pop(), pop()))
-            )
-        )
-    );
+                sequence('-', Term(), swap(), push(sub, pop(), pop())))));
 }
 
-rule *calculator::Term() {
+rule *calculator::Term()
+{
     return sequence(
         Factor(),
         zeroOrMore(
             firstOf(
                 sequence('*', Factor(), push(mult, pop(), pop())),
-                sequence('/', Factor(), swap(), push(divide, pop(), pop()))
-            )
-        )
-    );
+                sequence('/', Factor(), swap(), push(divide, pop(), pop())))));
 }
 
-rule *calculator::Factor() {
+rule *calculator::Factor()
+{
     return firstOf(Number(), Parens());
 }
 
-rule *calculator::Parens() {
+rule *calculator::Parens()
+{
     return sequence('(', recursion(expr), ')');
 }
 
-rule *calculator::Number() {
+rule *calculator::Number()
+{
     return sequence(
-            Digits(),
-            push(match()),
-            push(toi, pop())
-    );
+        Digits(),
+        push(match()),
+        push(toi, pop()));
 }
 
-rule *calculator::Digits() {
+rule *calculator::Digits()
+{
     return oneOrMore(Digit());
 }
 
-rule *calculator::Digit() {
+rule *calculator::Digit()
+{
     return charRange('0', '9');
 }
 
@@ -438,20 +440,43 @@ int main()
         std::cout << "Failed 36" << std::endl;
     }
 
-    if (calc->parse("2", calc->InputLine())) {
-        std::cout << "Accepted" << std::endl;
-        int result = *(int*)calc->getResult();
-        std::cout << result << std::endl;
-        if (result == 2) {
+    if (calc->parse("2", calc->InputLine()))
+    {
+        int *result = static_cast<int *>(calc->getResult());
+        if (*result == 2)
+        {
             std::cout << "Passed" << std::endl;
             passed++;
-        } else {
+        }
+        else
+        {
             std::cout << "Failed 37" << std::endl;
         }
-    } else {
+    }
+    else
+    {
         std::cout << "Failed 37" << std::endl;
     }
 
-    std::cout << passed << "/" << 37 << " cases pass" << std::endl;
+    if (calc->parse("(7*2+6)/10", calc->InputLine()))
+    {
+        std::cout << "here?" << std::endl;
+        int *result = static_cast<int *>(calc->getResult());
+        if (*result == 2)
+        {
+            std::cout << "Passed" << std::endl;
+            passed++;
+        }
+        else
+        {
+            std::cout << "Failed 38" << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Failed 38" << std::endl;
+    }
+
+    std::cout << passed << "/" << 38 << " cases pass" << std::endl;
     return 0;
 }

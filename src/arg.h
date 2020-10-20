@@ -65,6 +65,7 @@ template <typename T>
 void arg::populate(stackLink *current, T par)
 {
     stackLink *add = new stackLink();
+    add->test = "append";
     add->item = par;
     add->hasItem = true;
     checkRule(add, par);
