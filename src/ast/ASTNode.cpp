@@ -62,15 +62,19 @@ void *anyNode::act(stack *values)
 bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     linkNode *current = link;
-    if (current->getChild()->parse(source, path, str))
+    std::string *copy = new std::string;
+    *copy = *str;
+    if (current->getChild()->parse(source, path, copy))
     {
+        *str = copy->substr(str->length(), (copy->length() - str->length()));
         return true;
     }
     while (current->hasSibling)
     {
         current = current->getSibling();
-        if (current->getChild()->parse(source, path, str))
+        if (current->getChild()->parse(source, path, copy))
         {
+            *str = copy->substr(str->length(), (copy->length() - str->length()));
             return true;
         }
     }
@@ -188,15 +192,19 @@ void *EOINode::act(stack *values)
 bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     linkNode *current = link;
-    if (current->getChild()->parse(source, path, str))
+    std::string *copy = new std::string();
+    *copy = *str;
+    if (current->getChild()->parse(source, path, copy))
     {
+        *str = copy->substr(str->length(), (copy->length() - str->length()));
         return true;
     }
     while (current->hasSibling)
     {
         current = current->getSibling();
-        if (current->getChild()->parse(source, path, str))
+        if (current->getChild()->parse(source, path, copy))
         {
+            *str = copy->substr(str->length(), (copy->length() - str->length()));
             return true;
         }
     }
@@ -350,20 +358,29 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
     std::cout << "Enter: " << *source << std::endl;
     std::cout << "pre oom: " << *str << std::endl;
     std::string *blank = new std::string();
+    std::string *total = new std::string();
+    std::string *copy = new std::string();
     *blank = *str;
     bool first = true;
     do
     {
-        if (first && link->getChild()->parse(source, path, blank))
+        if (!first)
+        {
+            *blank = blank->substr(copy->length(), (blank->length() - copy->length()));
+        }
+        else if (link->getChild()->parse(source, path, blank))
         {
             first = false;
+            *blank = blank->substr(str->length(), (blank->length() - str->length()));
         }
-        else if (first)
+        else
         {
             return false;
         }
+        *total += *blank;
+        *copy = *blank;
     } while (link->getChild()->parse(source, path, blank));
-    *str = *blank;
+    *str = *total;
     std::cout << "post oom: " << *str << std::endl;
     return true;
 }
@@ -380,7 +397,12 @@ optionalNode::optionalNode(ASTNode *node)
 
 bool optionalNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    link->getChild()->parse(source, path, str);
+    std::string *copy = new std::string();
+    *copy = *str;
+    if (link->getChild()->parse(source, path, copy))
+    {
+        *str = copy->substr(str->length(), (copy->length() - str->length()));
+    }
     return true;
 }
 
@@ -536,7 +558,13 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
         eval = func();
     }
 
-    bool test = eval->getNode()->parse(source, path, str);
+    std::string *copy = new std::string();
+    *copy = *str;
+    bool test = eval->getNode()->parse(source, path, copy);
+    if (test)
+    {
+        *str = copy->substr(str->length(), (copy->length() - str->length()));
+    }
     delete eval;
     return test;
 }
@@ -741,21 +769,34 @@ zeroOrMoreNode::zeroOrMoreNode(ASTNode *node)
 
 bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
 {
+    std::cout << "Enter: " << *source << std::endl;
+    std::cout << "pre oom: " << *str << std::endl;
     std::string *blank = new std::string();
+    std::string *total = new std::string();
+    std::string *copy = new std::string();
     *blank = *str;
     bool first = true;
     do
     {
-        if (first && link->getChild()->parse(source, path, blank))
+        if (!first)
+        {
+            *blank = blank->substr(copy->length(), (blank->length() - copy->length()));
+        }
+        else if (link->getChild()->parse(source, path, blank))
         {
             first = false;
+            *blank = blank->substr(str->length(), (blank->length() - str->length()));
         }
-        else if (first)
+        else
         {
+            *str = *total;
             return true;
         }
+        *total += *blank;
+        *copy = *blank;
     } while (link->getChild()->parse(source, path, blank));
-    *str = *blank;
+    *str = *total;
+    std::cout << "post oom: " << *str << std::endl;
     return true;
 }
 
