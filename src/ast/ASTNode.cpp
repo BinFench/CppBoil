@@ -47,7 +47,7 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str)
 {
     if (source->length() > 0)
     {
-        *str += source->at(0);
+        *str = source->at(0);
         source->erase(0, 1);
         return true;
     }
@@ -119,7 +119,7 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
 
     if (temp >= min && temp <= max)
     {
-        *str += source->at(0);
+        *str = source->at(0);
         source->erase(0, 1);
         return true;
     }
@@ -143,7 +143,7 @@ bool chNode::parse(std::string *source, linkNode *path, std::string *str)
         return false;
     if (source->at(0) == ch)
     {
-        *str += source->at(0);
+        *str = source->at(0);
         source->erase(0, 1);
         return true;
     }
@@ -236,7 +236,7 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
     {
         if (tolower(source->at(0)) == tolower(((chNode *)link->getChild())->ch))
         {
-            *str += source->at(0);
+            *str = source->at(0);
             source->erase(0, 1);
             return true;
         }
@@ -254,7 +254,7 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
 
         if (data == data2)
         {
-            *str += source->substr(0, data.length());
+            *str = source->substr(0, data.length());
             source->erase(0, data.length());
             return true;
         }
@@ -314,7 +314,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
             return false;
         }
     }
-    *str += source->at(0);
+    *str = source->at(0);
     source->erase(0, 1);
     delete dummy;
     return true;
@@ -347,6 +347,8 @@ oneOrMoreNode::oneOrMoreNode(ASTNode *node)
 
 bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
 {
+    std::cout << "Enter: " << *source << std::endl;
+    std::cout << "pre oom: " << *str << std::endl;
     std::string *blank = new std::string();
     *blank = *str;
     bool first = true;
@@ -361,7 +363,8 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
             return false;
         }
     } while (link->getChild()->parse(source, path, blank));
-    *str += *blank;
+    *str = *blank;
+    std::cout << "post oom: " << *str << std::endl;
     return true;
 }
 
@@ -559,7 +562,7 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
 
         if (std::regex_search(eval.begin(), eval.end(), match, rgx) && source->find(match[1]) == 0)
         {
-            *last += source->substr(0, match[1].length());
+            *last = source->substr(0, match[1].length());
             source->erase(0, match[1].length());
             return true;
         }
@@ -579,6 +582,7 @@ void *regexNode::act(stack *values)
 
 bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
 {
+    std::cout << *source << std::endl;
     linkNode *current = link;
     std::string copy = *source;
     linkNode *dummy = new linkNode();
@@ -592,7 +596,18 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
         return false;
     }
     *temp = *blank;
-    *blank = blank->substr(str->length(), (blank->length() - str->length()));
+    std::cout << "Pre: " << *str << std::endl;
+    std::cout << "Match: " << *blank << std::endl;
+    std::cout << "diff: " << (blank->length() - str->length()) << std::endl;
+    if (blank->length() - str->length() > 0)
+    {
+        *blank = blank->substr(str->length(), (blank->length() - str->length()));
+    }
+    else
+    {
+        *blank = "";
+    }
+    std::cout << "Match aft: " << *blank << std::endl;
     *ret = *temp;
     while (current->hasSibling)
     {
@@ -630,7 +645,7 @@ bool stringNode::parse(std::string *source, linkNode *path, std::string *match)
         return false;
     if (source->find(str) == 0)
     {
-        *match += source->substr(0, str.length());
+        *match = source->substr(0, str.length());
         source->erase(0, str.length());
         return true;
     }
@@ -740,7 +755,7 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
             return true;
         }
     } while (link->getChild()->parse(source, path, blank));
-    *str += *blank;
+    *str = *blank;
     return true;
 }
 

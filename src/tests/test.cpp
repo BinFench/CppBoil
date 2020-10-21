@@ -49,6 +49,7 @@ int *toi(arg *Arg)
     std::string *s = new std::string();
     s = static_cast<std::string *>(Arg->get(0));
     int *num = new int();
+    std::cout << *s << std::endl;
     *num = std::stoi(*s, nullptr, 10);
     return num;
 }

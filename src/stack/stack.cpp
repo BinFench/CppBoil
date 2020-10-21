@@ -9,6 +9,7 @@ stack::stack()
 void stack::push(void *item)
 {
     std::cout << "push item!" << std::endl;
+    std::cout << *(static_cast<std::string *>(item)) << std::endl;
     stackLink *link = new stackLink();
     link->test = "stack";
     link->item = item;
