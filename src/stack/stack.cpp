@@ -8,8 +8,7 @@ stack::stack()
 
 void stack::push(void *item)
 {
-    std::cout << "push item!" << std::endl;
-    std::cout << *(static_cast<std::string *>(item)) << std::endl;
+    std::cout << "Push item" << std::endl;
     stackLink *link = new stackLink();
     link->test = "stack";
     link->item = item;
@@ -30,7 +29,7 @@ void stack::push(void *item)
 
 void stack::push(rule *item)
 {
-    std::cout << "push rule!" << std::endl;
+    std::cout << "Push rule" << std::endl;
     stackLink *link = new stackLink();
     link->test = "stack";
     link->item = item;
@@ -51,9 +50,9 @@ void stack::push(rule *item)
 
 void *stack::pop()
 {
-    std::cout << "pop!" << std::endl;
     if (size > 0)
     {
+        std::cout << "Pop item" << std::endl;
         stackLink *link = head;
         head = head->link;
         void *item = link->item;
@@ -61,15 +60,15 @@ void *stack::pop()
         size--;
         return item;
     }
-    std::cout << "Stack empty" << std::endl;
+    std::cout << "Popping null" << std::endl;
     return nullptr;
 }
 
 void stack::swap()
 {
-    std::cout << "swap!" << std::endl;
     if (size > 2)
     {
+        std::cout << "Swap" << std::endl;
         stackLink *link1 = head;
         stackLink *link2 = head->link;
         link1->link = link2->link;
@@ -80,9 +79,9 @@ void stack::swap()
 
 void *stack::peek()
 {
-    std::cout << "peek!" << std::endl;
     if (size > 0)
     {
+        std::cout << "Peek" << std::endl;
         return head->item;
     }
     return nullptr;

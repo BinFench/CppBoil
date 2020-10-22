@@ -51,6 +51,7 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str)
         source->erase(0, 1);
         return true;
     }
+    *str = "";
     return false;
 }
 
@@ -66,7 +67,7 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str)
     *copy = *str;
     if (current->getChild()->parse(source, path, copy))
     {
-        *str = copy->substr(str->length(), (copy->length() - str->length()));
+        *str = *copy;
         return true;
     }
     while (current->hasSibling)
@@ -74,10 +75,11 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str)
         current = current->getSibling();
         if (current->getChild()->parse(source, path, copy))
         {
-            *str = copy->substr(str->length(), (copy->length() - str->length()));
+            *str = *copy;
             return true;
         }
     }
+    *str = "";
     return false;
 }
 
@@ -108,8 +110,10 @@ charRangeNode::charRangeNode(chNode *begin, chNode *end)
 
 bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    if (source->length() == 0)
+    if (source->length() == 0) {
+        *str = "";
         return false;
+    }
     char max = ((chNode *)(link->getChild()))->ch;
     char min = ((chNode *)(link->getSibling()->getChild()))->ch;
     char temp;
@@ -127,6 +131,7 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
         source->erase(0, 1);
         return true;
     }
+    *str = "";
     return false;
 }
 
@@ -143,19 +148,17 @@ chNode::chNode(char nch)
 
 bool chNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::cout << "looking for " << ch << std::endl;
     if (source->length() == 0) {
-        std::cout << "Empty" << std::endl;
+        *str = "";
         return false;
     }
     if (source->at(0) == ch)
     {
         *str = source->at(0);
         source->erase(0, 1);
-        std::cout << "Pass" << std::endl;
         return true;
     }
-    std::cout << "Fail" << std::endl;
+    *str = "";
     return false;
 }
 
@@ -171,6 +174,7 @@ emptyNode::emptyNode()
 
 bool emptyNode::parse(std::string *source, linkNode *path, std::string *str)
 {
+    *str = "";
     return true;
 }
 
@@ -186,7 +190,12 @@ EOINode::EOINode()
 
 bool EOINode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    return (source->length() == 0);
+    if (source->length() == 0) {
+        *str = "";
+        return true;
+    }
+    *str = "";
+    return false;
 }
 
 void *EOINode::act(stack *values)
@@ -196,13 +205,12 @@ void *EOINode::act(stack *values)
 
 bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::cout << "Yeet" << std::endl;
     linkNode *current = link;
     std::string *copy = new std::string();
     *copy = *str;
     if (current->getChild()->parse(source, path, copy))
     {
-        *str = copy->substr(str->length(), (copy->length() - str->length()));
+        *str = *copy;
         return true;
     }
     while (current->hasSibling)
@@ -210,11 +218,11 @@ bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str)
         current = current->getSibling();
         if (current->getChild()->parse(source, path, copy))
         {
-            *str = copy->substr(str->length(), (copy->length() - str->length()));
+            *str = *copy;
             return true;
         }
     }
-    std::cout << "Yote" << std::endl;
+    *str = "";
     return false;
 }
 
@@ -245,8 +253,10 @@ ignoreCaseNode::ignoreCaseNode(stringNode *str)
 
 bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    if (source->length() == 0)
+    if (source->length() == 0) {
+        *str = "";
         return false;
+    }
     if (link->getChild()->getId() == "char")
     {
         if (tolower(source->at(0)) == tolower(((chNode *)link->getChild())->ch))
@@ -255,6 +265,7 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
             source->erase(0, 1);
             return true;
         }
+        *str = "";
         return false;
     }
     else
@@ -273,6 +284,7 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
             source->erase(0, data.length());
             return true;
         }
+        *str = "";
         return false;
     }
 }
@@ -299,12 +311,16 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     current->attach(this);
 
+    *str = "";
     return true;
 }
 
 void *matchNode::act(stack *values)
 {
-    return static_cast<void *>(&match);
+    std::cout << "MATCH: " << match << std::endl;
+    std::string *toRet = new std::string();
+    *toRet = match;
+    return static_cast<void *>(toRet);
 }
 
 bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
@@ -317,6 +333,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
     if (current->getChild()->parse(&sample, dummy, blank))
     {
         delete dummy;
+        *str = "";
         return false;
     }
     while (current->hasSibling)
@@ -326,6 +343,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str)
         if (current->getChild()->parse(&sample, dummy, blank))
         {
             delete dummy;
+            *str = "";
             return false;
         }
     }
@@ -362,36 +380,24 @@ oneOrMoreNode::oneOrMoreNode(ASTNode *node)
 
 bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::cout << "Enter: " << *source << std::endl;
-    std::cout << "pre oom: " << *str << std::endl;
     std::string *blank = new std::string();
     std::string *total = new std::string();
-    std::string *copy = new std::string();
-    std::cout << "Allocated" << std::endl;
     *blank = *str;
     bool first = true;
     do
     {
-        std::cout << "enter loop" << std::endl;
-        if (!first)
-        {
-            *blank = blank->substr(copy->length(), (blank->length() - copy->length()));
-        }
-        else if (link->getChild()->parse(source, path, blank))
+        if (first && link->getChild()->parse(source, path, blank))
         {
             first = false;
-            *blank = blank->substr(str->length(), (blank->length() - str->length()));
         }
-        else
+        else if (first)
         {
+            *str = "";
             return false;
         }
         *total += *blank;
-        *copy = *blank;
-        std::cout << "pre crash" << std::endl;
     } while (link->getChild()->parse(source, path, blank));
     *str = *total;
-    std::cout << "post oom: " << *str << std::endl;
     return true;
 }
 
@@ -411,7 +417,7 @@ bool optionalNode::parse(std::string *source, linkNode *path, std::string *str)
     *copy = *str;
     if (link->getChild()->parse(source, path, copy))
     {
-        *str = copy->substr(str->length(), (copy->length() - str->length()));
+        *str = *copy;
     }
     return true;
 }
@@ -437,11 +443,13 @@ bool peekNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     current->attach(this);
 
+    *str = "";
     return true;
 }
 
 void *peekNode::act(stack *values)
 {
+    std::cout << "PEEK" << std::endl;
     return values->peek();
 }
 
@@ -461,11 +469,13 @@ bool popNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     current->attach(this);
 
+    *str = "";
     return true;
 }
 
 void *popNode::act(stack *values)
 {
+    std::cout << "POP" << std::endl;
     return values->pop();
 }
 
@@ -513,6 +523,7 @@ void *pushNode::push()
 
 void *pushNode::act(stack *values)
 {
+    std::cout << "PUSH" << std::endl;
     temp = values;
     if (which == "func" && Arg != nullptr)
     {
@@ -539,7 +550,7 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str)
         std::string *empty = new std::string();
         match->getNode()->parse(empty, dummy, str);
     }
-
+    *str = "";
     return true;
 }
 
@@ -573,7 +584,9 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
     bool test = eval->getNode()->parse(source, path, copy);
     if (test)
     {
-        *str = copy->substr(str->length(), (copy->length() - str->length()));
+        *str = *copy;
+    } else {
+        *str = "";
     }
     delete eval;
     return test;
@@ -604,11 +617,13 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last)
             source->erase(0, match[1].length());
             return true;
         }
+        *last = "";
         return false;
     }
     catch (const std::regex_error &e)
     {
         std::cout << "regex_error caught: " << e.what() << std::endl;
+        *last = "";
         return false;
     }
 }
@@ -631,6 +646,7 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
     if (!current->getChild()->parse(copy, dummy, blank))
     {
         delete dummy;
+        *str = "";
         return false;
     }
     *ret += *blank;
@@ -640,16 +656,15 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str)
         if (!current->getChild()->parse(copy, dummy, blank))
         {
             delete dummy;
+            *str = "";
             return false;
         }
-        //TODO:: Rework matching string functionality, out of range here
         *ret += *blank;
     }
 
     *source = *copy;
     path->getTail()->append(dummy);
     *str = *ret;
-    std::cout << *str << std::endl;
     return true;
 }
 
@@ -666,14 +681,17 @@ stringNode::stringNode(std::string nstr)
 
 bool stringNode::parse(std::string *source, linkNode *path, std::string *match)
 {
-    if (source->length() == 0)
+    if (source->length() == 0) {
+        *match = "";
         return false;
+    }
     if (source->find(str) == 0)
     {
         *match = source->substr(0, str.length());
         source->erase(0, str.length());
         return true;
     }
+    *match = "";
     return false;
 }
 
@@ -698,11 +716,13 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str)
     }
     current->attach(this);
 
+    *str = "";
     return true;
 }
 
 void *swapNode::act(stack *values)
 {
+    std::cout << "SWAP" << std::endl;
     values->swap();
     return nullptr;
 }
@@ -766,39 +786,26 @@ zeroOrMoreNode::zeroOrMoreNode(ASTNode *node)
 
 bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
 {
-    std::cout << "Enter: " << *source << std::endl;
-    std::cout << "pre zom: " << *str << std::endl;
     std::string *blank = new std::string();
     std::string *total = new std::string();
     std::string *copy = new std::string();
     *blank = *str;
+    *total = "";
     bool first = true;
     do
     {
-        std::cout << "Crash here?" << std::endl;
-        if (!first)
-        {
-            *blank = blank->substr(copy->length(), (blank->length() - copy->length()));
-        }
-        else if (link->getChild()->parse(source, path, blank))
+        if (first && link->getChild()->parse(source, path, blank))
         {
             first = false;
-            *blank = blank->substr(str->length(), (blank->length() - str->length()));
         }
-        else
+        else if (first)
         {
-            std::cout << "Crash here." << std::endl;
-            *str = *total;
-            std::cout << "Crash here?" << std::endl;
+            *str = "";
             return true;
         }
-        std::cout << "Crash here?" << std::endl;
         *total += *blank;
-        *copy = *blank;
-        std::cout << "Crash here?" << std::endl;
     } while (link->getChild()->parse(source, path, blank));
     *str = *total;
-    std::cout << "post zom: " << *str << std::endl;
     return true;
 }
 

@@ -1,4 +1,5 @@
 #include "arg.h"
+#include <iostream>
 
 int arg::getSize()
 {
@@ -18,6 +19,7 @@ void *arg::get(int i)
         void *toRet;
         if (current->isRule && current->hasItem && (((rule *)(current->item))->getNode()->getId() == "pop" || ((rule *)(current->item))->getNode()->getId() == "peek"))
         {
+            std::cout << "This happens" << std::endl;
             toRet = static_cast<void *>(((rule *)(current->item))->getNode()->act(values));
         }
         else if (current->hasItem)
