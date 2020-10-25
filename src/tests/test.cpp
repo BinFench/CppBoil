@@ -18,46 +18,55 @@ calculator *calc = new calculator();
 
 int *sum(arg *Arg)
 {
-    int a = *(int *)Arg->get(0);
-    int b = *(int *)Arg->get(1);
+    int *a = (int *)Arg->get(0);
+    int *b = (int *)Arg->get(1);
     int *num = new int();
-    *num = a + b;
+    *num = *a + *b;
+    delete a;
+    delete b;
     return num;
 }
 
 int *sub(arg *Arg)
 {
-    int a = *(int *)Arg->get(0);
-    int b = *(int *)Arg->get(1);
+    int *a = (int *)Arg->get(0);
+    int *b = (int *)Arg->get(1);
     int *num = new int();
-    *num = a - b;
+    *num = *a - *b;
+    delete a;
+    delete b;
     return num;
 }
 
 int *mult(arg *Arg)
 {
-    int a = *(int *)Arg->get(0);
-    int b = *(int *)Arg->get(1);
+    int *a = (int *)Arg->get(0);
+    int *b = (int *)Arg->get(1);
     int *num = new int();
-    *num = a * b;
+    *num = *a * *b;
+    delete a;
+    delete b;
     return num;
 }
 
 int *divide(arg *Arg)
 {
-    int a = *(int *)Arg->get(0);
-    int b = *(int *)Arg->get(1);
+    int *a = (int *)Arg->get(0);
+    int *b = (int *)Arg->get(1);
     int *num = new int();
-    *num = a / b;
+    *num = *a / *b;
+    delete a;
+    delete b;
     return num;
 }
 
 int *toi(arg *Arg)
 {
-    std::string *s = new std::string();
+    std::string *s;
     s = static_cast<std::string *>(Arg->get(0));
     int *num = new int();
     *num = std::stoi(*s, nullptr, 10);
+    delete s;
     return num;
 }
 
@@ -460,6 +469,7 @@ int main()
         {
             std::cout << "Failed 37" << std::endl;
         }
+        delete result;
     }
     else
     {
@@ -478,6 +488,7 @@ int main()
         {
             std::cout << "Failed 38" << std::endl;
         }
+        delete result;
     }
     else
     {
@@ -496,6 +507,7 @@ int main()
         {
             std::cout << "Failed 39" << std::endl;
         }
+        delete result;
     }
     else
     {

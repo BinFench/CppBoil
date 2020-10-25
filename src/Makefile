@@ -1,5 +1,5 @@
 CC=g++
-CPPFLAGS=-g -std=c++17 -fPIC
+CPPFLAGS= -std=c++17 -fPIC
 DEPS = arg.h parser/rule.h parser/parser.h ast/ASTNode.h ast/linkNode.h stack/stack.h stackLink.h
 OBJ = parser/parser.o ast/ASTNode.o ast/linkNode.o parser/rule.o stack/stack.o stack/stackLink.o arg.o
 
@@ -7,10 +7,13 @@ default:
 	echo "Please either make static or make lib"
 
 tests/test.cpp: CBoil.o
-	$(CC) $@ $^ -o test $(CPPFLAGS)
+	$(CC) $@ $^ -o test -std=c++17
 	./test
 	rm -rf CBoil.o
-	rm test
+
+memtest: CBoil.o
+	$(CC) tests/test.cpp $^ -o test -std=c++17
+	valgrind --tool=memcheck --leak-check=yes ./test
 
 CBoil.o: $(OBJ)
 	ld -r $^ -o CBoil.o
@@ -36,10 +39,9 @@ lib: CBoil.o
 static: CBoil.o
 	echo "Static object created."
 
-libtest:
-	$(CC) tests/libtest.cpp -o test -lCBoil
+libtest: lib
+	$(CC) tests/libtest.cpp -o test -lCBoil -std=c++17 -fPIE
 	./test
-	rm test
 
 remove:
 	sudo rm /usr/include/CBoil
@@ -53,3 +55,4 @@ clean:
 	rm -rf stack/*.o
 	rm -rf parser/*.o
 	rm -rf ast/*.o
+	rm test
