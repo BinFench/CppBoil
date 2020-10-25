@@ -317,7 +317,6 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str)
 
 void *matchNode::act(stack *values)
 {
-    std::cout << "MATCH: " << match << std::endl;
     std::string *toRet = new std::string();
     *toRet = match;
     return static_cast<void *>(toRet);
@@ -449,7 +448,6 @@ bool peekNode::parse(std::string *source, linkNode *path, std::string *str)
 
 void *peekNode::act(stack *values)
 {
-    std::cout << "PEEK" << std::endl;
     return values->peek();
 }
 
@@ -475,7 +473,6 @@ bool popNode::parse(std::string *source, linkNode *path, std::string *str)
 
 void *popNode::act(stack *values)
 {
-    std::cout << "POP" << std::endl;
     return values->pop();
 }
 
@@ -523,7 +520,6 @@ void *pushNode::push()
 
 void *pushNode::act(stack *values)
 {
-    std::cout << "PUSH" << std::endl;
     temp = values;
     if (which == "func" && Arg != nullptr)
     {
@@ -722,7 +718,6 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str)
 
 void *swapNode::act(stack *values)
 {
-    std::cout << "SWAP" << std::endl;
     values->swap();
     return nullptr;
 }

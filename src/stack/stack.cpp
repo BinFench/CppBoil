@@ -1,5 +1,4 @@
 #include "stack.h"
-#include <iostream>
 
 stack::stack()
 {
@@ -8,7 +7,6 @@ stack::stack()
 
 void stack::push(void *item)
 {
-    std::cout << "Push item" << std::endl;
     stackLink *link = new stackLink();
     link->test = "stack";
     link->item = item;
@@ -29,7 +27,6 @@ void stack::push(void *item)
 
 void stack::push(rule *item)
 {
-    std::cout << "Push rule" << std::endl;
     stackLink *link = new stackLink();
     link->test = "stack";
     link->item = item;
@@ -52,7 +49,6 @@ void *stack::pop()
 {
     if (size > 0)
     {
-        std::cout << "Pop item" << std::endl;
         stackLink *link = head;
         head = head->link;
         void *item = link->item;
@@ -60,15 +56,13 @@ void *stack::pop()
         size--;
         return item;
     }
-    std::cout << "Popping null" << std::endl;
     return nullptr;
 }
 
 void stack::swap()
 {
-    if (size > 2)
+    if (size >= 2)
     {
-        std::cout << "Swap" << std::endl;
         stackLink *link1 = head;
         stackLink *link2 = head->link;
         link1->link = link2->link;
@@ -81,8 +75,11 @@ void *stack::peek()
 {
     if (size > 0)
     {
-        std::cout << "Peek" << std::endl;
         return head->item;
     }
     return nullptr;
+}
+
+int stack::getSize() {
+    return size;
 }

@@ -13,6 +13,7 @@ public:
     void *pop();
     void swap();
     void *peek();
+    int getSize();
 
 protected:
     int size;

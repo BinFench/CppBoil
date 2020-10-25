@@ -1,5 +1,4 @@
 #include "parser.h"
-#include <iostream>
 
 ASTNode *makeNode(char ch)
 {
@@ -42,21 +41,17 @@ bool parser::parse(std::string source, rule *root)
         linkNode *current = parsePath;
         if (current->hasChild)
         {
-            std::cout << "ACT" << std::endl;
             current->getChild()->act(values);
         }
-        std::cout << "Make it here" << std::endl;
         while (current->hasSibling)
         {
             current = current->getSibling();
             if (current->hasChild)
             {
-                std::cout << "ACT" << std::endl;
                 current->getChild()->act(values);
             }
         }
 
-        std::cout << "Make it here" << std::endl;
         delete parsePath;
         delete root;
         return true;

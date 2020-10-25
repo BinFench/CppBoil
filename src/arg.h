@@ -49,8 +49,7 @@ void arg::populate(stackLink *current, T par, Args... Arg)
     if (size == 0)
     {
         size++;
-        delete current;
-        current = add;
+        *current = *add;
         populate(current, Arg...);
     }
     else
@@ -72,8 +71,7 @@ void arg::populate(stackLink *current, T par)
 
     if (size == 0)
     {
-        delete current;
-        current = add;
+        *current = *add;
     }
     else
     {
