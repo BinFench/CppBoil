@@ -53,10 +53,13 @@ void linkNode::removeTail() {
 }
 
 linkNode::~linkNode() {
+    std::cout << "link" << std::endl;
     if (hasChild) {
+        std::cout << "link children" << std::endl;
         delete ASTChildren;
     }
     if (hasSibling) {
+        std::cout << "link sibling" << std::endl;
         delete sibling;
     }
 }

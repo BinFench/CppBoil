@@ -1,4 +1,5 @@
 #include "stack.h"
+#include <iostream>
 
 stack::stack() {
     size = 0;
@@ -70,6 +71,7 @@ int stack::getSize() {
 }
 
 stack::~stack() {
+    std::cout << "stack" << std::endl;
     if (size > 0) {
         stackLink *current = head;
         stackLink *toDel = head;

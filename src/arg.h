@@ -14,6 +14,7 @@ public:
     void *get(int i);
     int getSize();
     stack *values;
+    ~arg();
 
 protected:
     stackLink *link;

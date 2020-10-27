@@ -1,4 +1,5 @@
 #include "parser.h"
+#include <iostream>
 
 ASTNode *makeNode(char ch) {
     return new chNode(ch);
@@ -9,7 +10,9 @@ ASTNode *makeNode(std::string str) {
 }
 
 ASTNode *makeNode(rule *Rule) {
-    return Rule->getNode();
+    ASTNode *toRet = Rule->getNode();
+    delete Rule;
+    return toRet;
 }
 
 parser::parser() {
@@ -32,21 +35,25 @@ bool parser::parse(std::string source, rule *root) {
         linkNode *current = parsePath;
         if (current->hasChild) {
             current->getChild()->act(values);
+            //current->hasChild = false;
         }
         while (current->hasSibling) {
             current = current->getSibling();
             if (current->hasChild) {
                 current->getChild()->act(values);
+                //current->hasChild = false;
             }
         }
 
         delete parsePath;
+        delete root->getNode();
         delete root;
         delete str;
         return true;
     }
 
     delete parsePath;
+    delete root->getNode();
     delete root;
     delete str;
     return false;
@@ -146,5 +153,6 @@ rule *parser::recursion(std::function<rule *()> func) {
 }
 
 parser::~parser() {
+    std::cout << "parser" << std::endl;
     delete values;
 }

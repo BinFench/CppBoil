@@ -78,6 +78,7 @@ void *anyOfNode::act(stack *values) {
 }
 
 anyOfNode::~anyOfNode() {
+    std::cout << "anyOf" << std::endl;
     delete link;
 }
 
@@ -126,6 +127,7 @@ void *charRangeNode::act(stack *values) {
 }
 
 charRangeNode::~charRangeNode() {
+    std::cout << "charRange" << std::endl;
     delete link;
 }
 
@@ -209,7 +211,8 @@ void *firstOfNode::act(stack *values) {
 }
 
 firstOfNode::~firstOfNode() {
-    //delete link;
+    std::cout << "FirstOf" << std::endl;
+    delete link;
 }
 
 ignoreCaseNode::ignoreCaseNode(char ch) {
@@ -265,6 +268,7 @@ void *ignoreCaseNode::act(stack *values) {
 }
 
 ignoreCaseNode::~ignoreCaseNode() {
+    std::cout << "ignoreCase" << std::endl;
     delete link;
 }
 
@@ -280,7 +284,9 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str) {
         current->append(next);
         current = next;
     }
-    current->attach(this);
+    matchNode *clone = new matchNode();
+    *clone = *this;
+    current->attach(clone);
 
     *str = "";
     return true;
@@ -326,6 +332,7 @@ void *noneOfNode::act(stack *values) {
 }
 
 noneOfNode::~noneOfNode() {
+    std::cout << "noneOf" << std::endl;
     delete link;
 }
 
@@ -372,6 +379,7 @@ void *oneOrMoreNode::act(stack *values) {
 }
 
 oneOrMoreNode::~oneOrMoreNode() {
+    std::cout << "oneOrMore" << std::endl;
     delete link;
 }
 
@@ -394,6 +402,7 @@ void *optionalNode::act(stack *values) {
 }
 
 optionalNode::~optionalNode() {
+    std::cout << "optional" << std::endl;
     delete link;
 }
 
@@ -408,7 +417,9 @@ bool peekNode::parse(std::string *source, linkNode *path, std::string *str) {
         current->append(next);
         current = next;
     }
-    current->attach(this);
+    peekNode *clone = new peekNode();
+    *clone = *this;
+    current->attach(clone);
 
     *str = "";
     return true;
@@ -429,7 +440,9 @@ bool popNode::parse(std::string *source, linkNode *path, std::string *str) {
         current->append(next);
         current = next;
     }
-    current->attach(this);
+    popNode *clone = new popNode();
+    *clone = *this;
+    current->attach(clone);
 
     *str = "";
     return true;
@@ -461,6 +474,10 @@ pushNode::pushNode(rule *text) {
     match = text;
 }
 
+pushNode::pushNode() {
+    id = "push";
+}
+
 void *pushNode::push() {
     if (which == "func") {
         if (hasArgs) {
@@ -490,7 +507,9 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
         current->append(next);
         current = next;
     }
-    current->attach(this);
+    pushNode *clone = new pushNode();
+    *clone = *this;
+    current->attach(clone);
 
     if (which == "match") {
         linkNode *dummy = new linkNode();
@@ -502,10 +521,13 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 pushNode::~pushNode() {
+    std::cout << "push" << std::endl;
     if (which == "match") {
+        std::cout << "push rule" << std::endl;
         delete match;
     }
     if (hasArgs) {
+        std::cout << "push args" << std::endl;
         delete Arg;
     }
 }
@@ -547,7 +569,9 @@ void *recursionNode::act(stack *values) {
 }
 
 recursionNode::~recursionNode() {
+    std::cout << "recursion" << std::endl;
     if (hasArgs) {
+        std::cout << "recursion arg" << std::endl;
         delete Arg;
     }
 }
@@ -626,6 +650,7 @@ void *sequenceNode::act(stack *values) {
 }
 
 sequenceNode::~sequenceNode() {
+    std::cout << "Sequence" << std::endl;
     delete link;
 }
 
@@ -700,6 +725,7 @@ void *testNode::act(stack *values) {
 }
 
 testNode::~testNode() {
+    std::cout << "test" << std::endl;
     delete link;
 }
 
@@ -728,6 +754,7 @@ void *testNotNode::act(stack *values) {
 }
 
 testNotNode::~testNotNode() {
+    std::cout << "testNot" << std::endl;
     delete link;
 }
 
@@ -766,5 +793,6 @@ void *zeroOrMoreNode::act(stack *values) {
 }
 
 zeroOrMoreNode::~zeroOrMoreNode() {
+    std::cout << "zeroOrMore" << std::endl;
     delete link;
 }

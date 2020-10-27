@@ -1,4 +1,5 @@
 #include "arg.h"
+#include <iostream>
 
 int arg::getSize() {
     return size;
@@ -31,4 +32,19 @@ void arg::checkRule(stackLink *add, rule *par) {
 
 void arg::checkRule(stackLink *add, void *par) {
     add->isRule = false;
+}
+
+arg::~arg() {
+    std::cout << "arg" << std::endl;
+    if (size > 0) {
+        stackLink *current = link;
+        stackLink *toDel = link;
+
+        for (int i = 0; i < size - 1; i++) {
+            current = current->link;
+            delete toDel;
+            toDel = current;
+        }
+        delete toDel;
+    }
 }

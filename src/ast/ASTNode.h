@@ -6,6 +6,7 @@
 #include <functional>
 #include <regex>
 #include <string>
+#include <iostream>
 
 #ifndef ASTNODE_H
 #define ASTNODE_H
@@ -18,7 +19,7 @@ public:
     virtual void *act(stack *values) { return nullptr; };
     std::string getId();
     ASTNode();
-    virtual ~ASTNode() {}
+    virtual ~ASTNode() {std::cout << id << std::endl;}
 
 protected:
     std::string id;
@@ -233,6 +234,7 @@ public:
     pushNode(std::function<void *(arg *)> func, Args... Arg);
     pushNode(std::function<void *()> func);
     pushNode(rule *text);
+    pushNode();
     void *act(stack *values);
     void *push();
     bool parse(std::string *source, linkNode *path, std::string *str);

@@ -12,6 +12,7 @@ class stackLink {
         std::string test;
 
         stackLink();
+        ~stackLink();
 };
 
 #endif
