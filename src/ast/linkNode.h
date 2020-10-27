@@ -3,8 +3,7 @@ class ASTNode;
 #ifndef LINKNODE_H
 #define LINKNODE_H
 
-class linkNode
-{
+class linkNode {
 public:
     linkNode();
     void append(linkNode *sibling);
@@ -12,6 +11,7 @@ public:
     bool hasSibling;
     bool hasChild;
     void removeTail();
+    ~linkNode();
 
     ASTNode *getChild();
     linkNode *getSibling();

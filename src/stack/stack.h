@@ -4,8 +4,7 @@
 #ifndef STACK_H
 #define STACK_H
 
-class stack
-{
+class stack {
 public:
     stack();
     void push(void *item);
@@ -14,6 +13,7 @@ public:
     void swap();
     void *peek();
     int getSize();
+    ~stack();
 
 protected:
     int size;

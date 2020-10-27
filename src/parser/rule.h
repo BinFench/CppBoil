@@ -6,6 +6,7 @@ class rule {
     public:
         rule(ASTNode *node);
         ASTNode* getNode();
+        ~rule();
 
     protected:
         ASTNode *node;

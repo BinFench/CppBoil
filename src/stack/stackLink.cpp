@@ -1,7 +1,6 @@
 #include "stackLink.h"
 
-stackLink::stackLink()
-{
+stackLink::stackLink() {
     isRule = false;
     hasItem = false;
     test = "neither";

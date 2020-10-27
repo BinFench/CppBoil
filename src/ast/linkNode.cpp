@@ -1,41 +1,34 @@
 #include "linkNode.h"
 #include "ASTNode.h"
+#include <iostream>
 
-linkNode::linkNode()
-{
+linkNode::linkNode() {
     hasChild = false;
     hasSibling = false;
 }
 
-void linkNode::append(linkNode *nsibling)
-{
+void linkNode::append(linkNode *nsibling) {
     hasSibling = true;
     sibling = nsibling;
 }
 
-void linkNode::attach(ASTNode *child)
-{
+void linkNode::attach(ASTNode *child) {
     hasChild = true;
     ASTChildren = child;
 }
 
-ASTNode *linkNode::getChild()
-{
+ASTNode *linkNode::getChild() {
     return ASTChildren;
 }
 
-linkNode *linkNode::getSibling()
-{
+linkNode *linkNode::getSibling() {
     return sibling;
 }
 
-linkNode *linkNode::getTail()
-{
-    if (hasSibling)
-    {
+linkNode *linkNode::getTail() {
+    if (hasSibling) {
         linkNode *current = getSibling();
-        while (current->hasSibling)
-        {
+        while (current->hasSibling) {
             current = current->getSibling();
         }
         return current;
@@ -43,22 +36,27 @@ linkNode *linkNode::getTail()
     return this;
 }
 
-void linkNode::removeTail()
-{
-    if (hasSibling)
-    {
+void linkNode::removeTail() {
+    if (hasSibling) {
         linkNode *current = getSibling();
         linkNode *prev = this;
-        while (current->hasSibling)
-        {
+        while (current->hasSibling) {
             prev = current;
             current = current->getSibling();
         }
         prev->hasSibling = false;
-        if (current->hasChild)
-        {
+        if (current->hasChild) {
             delete current->ASTChildren;
         }
         delete current;
+    }
+}
+
+linkNode::~linkNode() {
+    if (hasChild) {
+        delete ASTChildren;
+    }
+    if (hasSibling) {
+        delete sibling;
     }
 }
