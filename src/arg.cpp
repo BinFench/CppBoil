@@ -30,6 +30,27 @@ void *arg::get(int i) {
     return nullptr;
 }
 
+void *arg::copy(int i) {
+    if (i < size) {
+        stackLink *current = link;
+        for (int j = 0; j < i; j++) {
+            current = current->link;
+        }
+
+        void *toRet;
+        if (current->isRule && current->hasItem) {
+            toRet = static_cast<void *>(new rule(((rule *)(current->item))->getNode()->copy()));
+        } else if (current->hasItem) {
+            toRet = static_cast<void *>(current->item);
+        } else {
+            toRet = nullptr;
+        }
+
+        return toRet;
+    }
+    return nullptr;
+}
+
 void arg::checkRule(stackLink *add, rule *par) {
     add->isRule = true;
 }

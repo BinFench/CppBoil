@@ -637,8 +637,9 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
     } else if (hasArgs) {
         arg *newArg = new arg();
         for (int i = 0; i < Arg->getSize(); i++) {
-            newArg->add(Arg->get(i), Arg->isRule(i));
+            newArg->add(Arg->copy(i), Arg->isRule(i));
         }
+        newArg->values = Arg->values;
         clone->Arg = newArg;
     }
     current->attach(clone);
@@ -658,8 +659,9 @@ ASTNode *pushNode::copy() {
     } else if (hasArgs) {
         arg *newArg = new arg();
         for (int i = 0; i < Arg->getSize(); i++) {
-            newArg->add(Arg->get(i), Arg->isRule(i));
+            newArg->add(Arg->copy(i), Arg->isRule(i));
         }
+        newArg->values = Arg->values;
         clone->Arg = newArg;
     }
     return clone;
@@ -723,8 +725,9 @@ ASTNode *recursionNode::copy() {
     if (hasArgs) {
         arg *newArg = new arg();
         for (int i = 0; i < Arg->getSize(); i++) {
-            newArg->add(Arg->get(i), Arg->isRule(i));
+            newArg->add(Arg->copy(i), Arg->isRule(i));
         }
+        newArg->values = Arg->values;
         clone->Arg = newArg;
     }
     return clone;

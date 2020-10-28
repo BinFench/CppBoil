@@ -13,6 +13,7 @@ public:
     template <typename... Args>
     arg(Args... args);
     void *get(int i);
+    void *copy(int i);
     int getSize();
     stack *values;
     ~arg();
