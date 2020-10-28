@@ -11,6 +11,7 @@ public:
     bool hasSibling;
     bool hasChild;
     void removeTail();
+    linkNode *copy();
     ~linkNode();
 
     ASTNode *getChild();

@@ -1,6 +1,10 @@
 #include "arg.h"
 #include <iostream>
 
+arg::arg() {
+    size = 0;
+}
+
 int arg::getSize() {
     return size;
 }
@@ -32,6 +36,36 @@ void arg::checkRule(stackLink *add, rule *par) {
 
 void arg::checkRule(stackLink *add, void *par) {
     add->isRule = false;
+}
+
+void arg::add(void *toAdd, bool Rule) {
+    if (size == 0) {
+        link = new stackLink();
+        link->isRule = Rule;
+        link->item = toAdd;
+    } else {
+        stackLink *current = link;
+        for (int i = 0; i < size - 1; i++) {
+            current = current->link;
+        }
+        current->link = new stackLink();
+        current = current->link;
+        current->isRule = Rule;
+        current->item = toAdd;
+    }
+
+    size++;
+}
+
+bool arg::isRule(int i) {
+    if (i < size) {
+        stackLink *current = link;
+        for (int j = 0; j < i; j++) {
+            current = current->link;
+        }
+        return current->isRule;
+    }
+    return false;
 }
 
 arg::~arg() {

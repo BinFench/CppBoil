@@ -52,6 +52,18 @@ void linkNode::removeTail() {
     }
 }
 
+linkNode *linkNode::copy() {
+    linkNode *toRet = new linkNode();
+    if (hasChild) {
+        toRet->ASTChildren = ASTChildren->copy();
+    }
+    if (hasSibling) {
+        toRet->sibling = sibling->copy();
+    }
+
+    return toRet;
+}
+
 linkNode::~linkNode() {
     std::cout << "link" << std::endl;
     if (hasChild) {

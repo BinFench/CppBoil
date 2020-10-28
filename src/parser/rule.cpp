@@ -9,3 +9,7 @@ rule::rule(ASTNode *nnode) {
 ASTNode *rule::getNode() {
     return node;
 }
+
+void rule::copyTo(ASTNode *copy) {
+    node = copy;
+}

@@ -51,6 +51,14 @@ void *anyNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *anyNode::copy() {
+    return new anyNode;
+}
+
+anyOfNode::anyOfNode() {
+    id = "anyOf";
+}
+
 bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = link;
     std::string *copy = new std::string;
@@ -77,9 +85,20 @@ void *anyOfNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *anyOfNode::copy() {
+    anyOfNode *toRet = new anyOfNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 anyOfNode::~anyOfNode() {
     std::cout << "anyOf" << std::endl;
     delete link;
+}
+
+charRangeNode::charRangeNode() {
+    id = "charRange";
 }
 
 charRangeNode::charRangeNode(char begin, char end) {
@@ -126,9 +145,20 @@ void *charRangeNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *charRangeNode::copy() {
+    charRangeNode *toRet = new charRangeNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 charRangeNode::~charRangeNode() {
     std::cout << "charRange" << std::endl;
     delete link;
+}
+
+chNode::chNode() {
+    id = "char";
 }
 
 chNode::chNode(char nch) {
@@ -154,6 +184,12 @@ void *chNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *chNode::copy() {
+    chNode *toRet = new chNode();
+    *toRet = *this;
+    return toRet;
+}
+
 emptyNode::emptyNode() {
     id = "empty";
 }
@@ -165,6 +201,10 @@ bool emptyNode::parse(std::string *source, linkNode *path, std::string *str) {
 
 void *emptyNode::act(stack *values) {
     return nullptr;
+}
+
+ASTNode *emptyNode::copy() {
+    return new emptyNode();
 }
 
 EOINode::EOINode() {
@@ -182,6 +222,14 @@ bool EOINode::parse(std::string *source, linkNode *path, std::string *str) {
 
 void *EOINode::act(stack *values) {
     return nullptr;
+}
+
+ASTNode *EOINode::copy() {
+    return new EOINode();
+}
+
+firstOfNode::firstOfNode() {
+    id = "firstOf";
 }
 
 bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str) {
@@ -210,9 +258,20 @@ void *firstOfNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *firstOfNode::copy() {
+    firstOfNode *toRet = new firstOfNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 firstOfNode::~firstOfNode() {
     std::cout << "FirstOf" << std::endl;
     delete link;
+}
+
+ignoreCaseNode::ignoreCaseNode() {
+    id = "ignoreCase";
 }
 
 ignoreCaseNode::ignoreCaseNode(char ch) {
@@ -267,6 +326,13 @@ void *ignoreCaseNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *ignoreCaseNode::copy() {
+    ignoreCaseNode *toRet = new ignoreCaseNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 ignoreCaseNode::~ignoreCaseNode() {
     std::cout << "ignoreCase" << std::endl;
     delete link;
@@ -296,6 +362,16 @@ void *matchNode::act(stack *values) {
     std::string *toRet = new std::string();
     *toRet = match;
     return static_cast<void *>(toRet);
+}
+
+ASTNode *matchNode::copy() {
+    matchNode *toRet = new matchNode();
+    *toRet = *this;
+    return toRet;
+}
+
+noneOfNode::noneOfNode() {
+    id = "noneOf";
 }
 
 bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
@@ -331,6 +407,13 @@ void *noneOfNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *noneOfNode::copy() {
+    noneOfNode *toRet = new noneOfNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 noneOfNode::~noneOfNode() {
     std::cout << "noneOf" << std::endl;
     delete link;
@@ -346,6 +429,14 @@ bool nothingNode::parse(std::string *source, linkNode *path, std::string *str) {
 
 void *nothingNode::act(stack *values) {
     return nullptr;
+}
+
+ASTNode *nothingNode::copy() {
+    return new nothingNode();
+}
+
+oneOrMoreNode::oneOrMoreNode() {
+    id = "oneOrMore";
 }
 
 oneOrMoreNode::oneOrMoreNode(ASTNode *node) {
@@ -378,9 +469,20 @@ void *oneOrMoreNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *oneOrMoreNode::copy() {
+    oneOrMoreNode *toRet = new oneOrMoreNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 oneOrMoreNode::~oneOrMoreNode() {
     std::cout << "oneOrMore" << std::endl;
     delete link;
+}
+
+optionalNode::optionalNode() {
+    id = "optional";
 }
 
 optionalNode::optionalNode(ASTNode *node) {
@@ -399,6 +501,13 @@ bool optionalNode::parse(std::string *source, linkNode *path, std::string *str) 
 
 void *optionalNode::act(stack *values) {
     return nullptr;
+}
+
+ASTNode *optionalNode::copy() {
+    optionalNode *toRet = new optionalNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
 }
 
 optionalNode::~optionalNode() {
@@ -429,6 +538,10 @@ void *peekNode::act(stack *values) {
     return values->peek();
 }
 
+ASTNode *peekNode::copy() {
+    return new peekNode();
+}
+
 popNode::popNode() {
     id = "pop";
 }
@@ -452,6 +565,14 @@ void *popNode::act(stack *values) {
     return values->pop();
 }
 
+ASTNode *popNode::copy() {
+    return new popNode();
+}
+
+pushNode::pushNode() {
+    id = "push";
+}
+
 pushNode::pushNode(std::function<void *(arg *)> func, arg *nArg) {
     id = "push";
     which = "func";
@@ -464,7 +585,6 @@ pushNode::pushNode(std::function<void *()> nfunc) {
     id = "push";
     which = "func";
     func = nfunc;
-    Arg = Arg;
     hasArgs = false;
 }
 
@@ -472,10 +592,6 @@ pushNode::pushNode(rule *text) {
     id = "push";
     which = "match";
     match = text;
-}
-
-pushNode::pushNode() {
-    id = "push";
 }
 
 void *pushNode::push() {
@@ -509,15 +625,44 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
     }
     pushNode *clone = new pushNode();
     *clone = *this;
-    current->attach(clone);
-
     if (which == "match") {
         linkNode *dummy = new linkNode();
         std::string *empty = new std::string();
         match->getNode()->parse(empty, dummy, str);
+
+        rule *newRule = new rule();
+        *newRule = *match;
+        newRule->copyTo(match->getNode()->copy());
+        clone->match = newRule;
+    } else if (hasArgs) {
+        arg *newArg = new arg();
+        for (int i = 0; i < Arg->getSize(); i++) {
+            newArg->add(Arg->get(i), Arg->isRule(i));
+        }
+        clone->Arg = newArg;
     }
+    current->attach(clone);
+
     *str = "";
     return true;
+}
+
+ASTNode *pushNode::copy() {
+    pushNode *clone = new pushNode();
+    *clone = *this;
+    if (which == "match") {
+        rule *newRule = new rule();
+        *newRule = *match;
+        newRule->copyTo(match->getNode()->copy());
+        clone->match = newRule;
+    } else if (hasArgs) {
+        arg *newArg = new arg();
+        for (int i = 0; i < Arg->getSize(); i++) {
+            newArg->add(Arg->get(i), Arg->isRule(i));
+        }
+        clone->Arg = newArg;
+    }
+    return clone;
 }
 
 pushNode::~pushNode() {
@@ -530,6 +675,10 @@ pushNode::~pushNode() {
         std::cout << "push args" << std::endl;
         delete Arg;
     }
+}
+
+recursionNode::recursionNode() {
+    id = "recursion";
 }
 
 recursionNode::recursionNode(std::function<rule *()> nfunc) {
@@ -568,12 +717,29 @@ void *recursionNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *recursionNode::copy() {
+    recursionNode *clone = new recursionNode();
+    *clone = *this;
+    if (hasArgs) {
+        arg *newArg = new arg();
+        for (int i = 0; i < Arg->getSize(); i++) {
+            newArg->add(Arg->get(i), Arg->isRule(i));
+        }
+        clone->Arg = newArg;
+    }
+    return clone;
+}
+
 recursionNode::~recursionNode() {
     std::cout << "recursion" << std::endl;
     if (hasArgs) {
         std::cout << "recursion arg" << std::endl;
         delete Arg;
     }
+}
+
+regexNode::regexNode() {
+    id = "regex";
 }
 
 regexNode::regexNode(std::string nstr) {
@@ -603,6 +769,16 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last) {
 
 void *regexNode::act(stack *values) {
     return nullptr;
+}
+
+ASTNode *regexNode::copy() {
+    regexNode *toRet = new regexNode();
+    *toRet = *this;
+    return toRet;
+}
+
+sequenceNode::sequenceNode() {
+    id = "sequence";
 }
 
 bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str) {
@@ -649,9 +825,20 @@ void *sequenceNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *sequenceNode::copy() {
+    sequenceNode *toRet = new sequenceNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 sequenceNode::~sequenceNode() {
     std::cout << "Sequence" << std::endl;
     delete link;
+}
+
+stringNode::stringNode() {
+    id = "string";
 }
 
 stringNode::stringNode(std::string nstr) {
@@ -677,6 +864,12 @@ void *stringNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *stringNode::copy() {
+    stringNode *toRet = new stringNode();
+    *toRet = *this;
+    return toRet;
+}
+
 swapNode::swapNode() {
     id = "swap";
 }
@@ -689,7 +882,9 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str) {
         current->append(next);
         current = next;
     }
-    current->attach(this);
+    swapNode *clone = new swapNode();
+    *clone = *this;
+    current->attach(clone);
 
     *str = "";
     return true;
@@ -698,6 +893,14 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str) {
 void *swapNode::act(stack *values) {
     values->swap();
     return nullptr;
+}
+
+ASTNode *swapNode::copy() {
+    return new swapNode();
+}
+
+testNode::testNode() {
+    id = "test";
 }
 
 testNode::testNode(ASTNode *node) {
@@ -724,9 +927,20 @@ void *testNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *testNode::copy() {
+    testNode *toRet = new testNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 testNode::~testNode() {
     std::cout << "test" << std::endl;
     delete link;
+}
+
+testNotNode::testNotNode() {
+    id = "testNot";
 }
 
 testNotNode::testNotNode(ASTNode *node) {
@@ -753,9 +967,20 @@ void *testNotNode::act(stack *values) {
     return nullptr;
 }
 
+ASTNode *testNotNode::copy() {
+    testNotNode *toRet = new testNotNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
+}
+
 testNotNode::~testNotNode() {
     std::cout << "testNot" << std::endl;
     delete link;
+}
+
+zeroOrMoreNode::zeroOrMoreNode() {
+    id = "zeroOrMore";
 }
 
 zeroOrMoreNode::zeroOrMoreNode(ASTNode *node) {
@@ -790,6 +1015,13 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
 
 void *zeroOrMoreNode::act(stack *values) {
     return nullptr;
+}
+
+ASTNode *zeroOrMoreNode::copy() {
+    zeroOrMoreNode *toRet = new zeroOrMoreNode();
+    *toRet = *this;
+    toRet->link = link->copy();
+    return toRet;
 }
 
 zeroOrMoreNode::~zeroOrMoreNode() {

@@ -4,8 +4,10 @@ class ASTNode;
 #define RULE_H
 class rule {
     public:
+        rule() {};
         rule(ASTNode *node);
         ASTNode* getNode();
+        void copyTo(ASTNode *copy);
 
     protected:
         ASTNode *node;

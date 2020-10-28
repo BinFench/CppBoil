@@ -9,12 +9,15 @@
 
 class arg {
 public:
+    arg();
     template <typename... Args>
     arg(Args... args);
     void *get(int i);
     int getSize();
     stack *values;
     ~arg();
+    void add(void *toAdd, bool Rule);
+    bool isRule(int i);
 
 protected:
     stackLink *link;
