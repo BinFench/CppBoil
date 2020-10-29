@@ -13,16 +13,14 @@ public:
     template <typename... Args>
     arg(Args... args);
     void *get(int i);
-    void *copy(int i);
     int getSize();
     stack *values;
+    arg *copy();
     ~arg();
-    void add(void *toAdd, bool Rule);
-    bool isRule(int i);
 
 protected:
     stackLink *link;
-    int size;
+    int size = 0;
     template <typename T, typename... Args>
     void populate(stackLink *current, T par, Args... Arg);
     template <typename T>

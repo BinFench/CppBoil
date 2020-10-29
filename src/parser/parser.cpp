@@ -153,6 +153,5 @@ rule *parser::recursion(std::function<rule *()> func) {
 }
 
 parser::~parser() {
-    std::cout << "parser" << std::endl;
     delete values;
 }

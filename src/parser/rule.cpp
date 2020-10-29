@@ -10,6 +10,8 @@ ASTNode *rule::getNode() {
     return node;
 }
 
-void rule::copyTo(ASTNode *copy) {
-    node = copy;
+rule *rule::copy() {
+    rule *newRule = new rule();
+    newRule->node = node->copy();
+    return newRule;
 }

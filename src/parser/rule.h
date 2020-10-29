@@ -2,12 +2,13 @@ class ASTNode;
 
 #ifndef RULE_H
 #define RULE_H
+
 class rule {
     public:
         rule() {};
         rule(ASTNode *node);
         ASTNode* getNode();
-        void copyTo(ASTNode *copy);
+        rule *copy();
 
     protected:
         ASTNode *node;

@@ -56,15 +56,11 @@ int *divide(arg *Arg) {
 }
 
 int *toi(arg *Arg) {
-    std::cout << "Fails here" << std::endl;
     std::string *s;
     s = static_cast<std::string *>(Arg->get(0));
-    std::cout << "Got: " << *s << std::endl;
     int *num = new int();
     *num = std::stoi(*s, nullptr, 10);
-    std::cout << "Converted" << std::endl;
     delete s;
-    std::cout << "Or not" << std::endl;
     return num;
 }
 

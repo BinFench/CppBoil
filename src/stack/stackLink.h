@@ -10,6 +10,7 @@ class stackLink {
         void *item;
         bool hasItem;
         std::string test;
+        stackLink *copy();
 
         stackLink();
         ~stackLink();

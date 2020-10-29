@@ -17,29 +17,8 @@ void *arg::get(int i) {
         }
 
         void *toRet;
-        if (current->isRule && current->hasItem && (((rule *)(current->item))->getNode()->getId() == "pop" || ((rule *)(current->item))->getNode()->getId() == "peek")) {
+        if (current->isRule && (((rule *)(current->item))->getNode()->getId() == "pop" || ((rule *)(current->item))->getNode()->getId() == "peek")) {
             toRet = static_cast<void *>(((rule *)(current->item))->getNode()->act(values));
-        } else if (current->hasItem) {
-            toRet = static_cast<void *>(current->item);
-        } else {
-            toRet = nullptr;
-        }
-
-        return toRet;
-    }
-    return nullptr;
-}
-
-void *arg::copy(int i) {
-    if (i < size) {
-        stackLink *current = link;
-        for (int j = 0; j < i; j++) {
-            current = current->link;
-        }
-
-        void *toRet;
-        if (current->isRule && current->hasItem) {
-            toRet = static_cast<void *>(new rule(((rule *)(current->item))->getNode()->copy()));
         } else if (current->hasItem) {
             toRet = static_cast<void *>(current->item);
         } else {
@@ -59,47 +38,39 @@ void arg::checkRule(stackLink *add, void *par) {
     add->isRule = false;
 }
 
-void arg::add(void *toAdd, bool Rule) {
-    if (size == 0) {
-        link = new stackLink();
-        link->isRule = Rule;
-        link->item = toAdd;
-    } else {
-        stackLink *current = link;
+arg *arg::copy() {
+    arg *newArg = new arg();
+    if (size > 0) {
+        newArg->link = link->copy();
+        stackLink *current;
+        stackLink *newCurr;
+        newCurr = newArg->link;
+        current = link;
+        newArg->size++;
         for (int i = 0; i < size - 1; i++) {
+            newCurr->link = current->link->copy();
+            newCurr = newCurr->link;
             current = current->link;
+            newArg->size++;
         }
-        current->link = new stackLink();
-        current = current->link;
-        current->isRule = Rule;
-        current->item = toAdd;
     }
-
-    size++;
-}
-
-bool arg::isRule(int i) {
-    if (i < size) {
-        stackLink *current = link;
-        for (int j = 0; j < i; j++) {
-            current = current->link;
-        }
-        return current->isRule;
-    }
-    return false;
+    return newArg;
 }
 
 arg::~arg() {
-    std::cout << "arg" << std::endl;
+    std::cout << "Cleaning up args: " << size << std::endl;
     if (size > 0) {
         stackLink *current = link;
         stackLink *toDel = link;
 
         for (int i = 0; i < size - 1; i++) {
+            std::cout << "Loop" << std::endl;
             current = current->link;
             delete toDel;
             toDel = current;
         }
+        std::cout << "Oop" << std::endl;
         delete toDel;
     }
+    std::cout << "Cleaned" << std::endl;
 }

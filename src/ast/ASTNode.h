@@ -17,10 +17,10 @@ class ASTNode {
 public:
     virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
     virtual void *act(stack *values) { return nullptr; };
-    virtual ASTNode *copy() {return nullptr;};
+    virtual ASTNode *copy() {std::cout << "Yo this shouldn't happen" << std::endl; return nullptr;};
     std::string getId();
     ASTNode();
-    virtual ~ASTNode() {std::cout << id << std::endl;}
+    virtual ~ASTNode() {}
 
 protected:
     std::string id;
@@ -44,7 +44,7 @@ public:
     chNode(char ch);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    chNode *copy();
 };
 
 class stringNode : public ASTNode {
@@ -54,7 +54,7 @@ public:
     stringNode(std::string str);
     bool parse(std::string *source, linkNode *path, std::string *match);
     void *act(stack *values);
-    ASTNode *copy();
+    stringNode *copy();
 };
 
 template <typename... Args>
@@ -105,7 +105,7 @@ public:
     anyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    anyNode *copy();
 };
 
 class anyOfNode : public ASTNode {
@@ -115,7 +115,7 @@ public:
     anyOfNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    anyOfNode *copy();
     ~anyOfNode();
 };
 
@@ -133,7 +133,7 @@ public:
     charRangeNode(chNode *begin, chNode *end);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    charRangeNode *copy();
     ~charRangeNode();
 };
 
@@ -142,7 +142,7 @@ public:
     emptyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    emptyNode *copy();
 };
 
 class EOINode : public ASTNode {
@@ -150,7 +150,7 @@ public:
     EOINode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    EOINode *copy();
 };
 
 class firstOfNode : public ASTNode {
@@ -160,7 +160,7 @@ public:
     firstOfNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    firstOfNode *copy();
     ~firstOfNode();
 };
 
@@ -178,7 +178,7 @@ public:
     ignoreCaseNode(stringNode *str);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    ignoreCaseNode *copy();
     ~ignoreCaseNode();
 };
 
@@ -187,7 +187,7 @@ public:
     matchNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    matchNode *copy();
 
 protected:
     std::string match;
@@ -200,7 +200,7 @@ public:
     noneOfNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    noneOfNode *copy();
     ~noneOfNode();
 };
 
@@ -214,7 +214,7 @@ public:
     nothingNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    nothingNode *copy();
 };
 
 class oneOrMoreNode : public ASTNode {
@@ -223,7 +223,7 @@ public:
     oneOrMoreNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    oneOrMoreNode *copy();
     ~oneOrMoreNode();
 };
 
@@ -233,7 +233,7 @@ public:
     optionalNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    optionalNode *copy();
     ~optionalNode();
 };
 
@@ -242,7 +242,7 @@ public:
     peekNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    peekNode *copy();
 };
 
 class popNode : public ASTNode {
@@ -250,7 +250,7 @@ public:
     popNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    popNode *copy();
 };
 
 class pushNode : public ASTNode {
@@ -264,7 +264,7 @@ public:
     void *act(stack *values);
     void *push();
     bool parse(std::string *source, linkNode *path, std::string *str);
-    ASTNode *copy();
+    pushNode *copy();
     ~pushNode();
 
 protected:
@@ -291,7 +291,7 @@ public:
     recursionNode(std::function<rule *(arg *)> func, Args... Arg);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    recursionNode *copy();
     ~recursionNode();
 
 protected:
@@ -313,7 +313,7 @@ public:
     regexNode(std::string str);
     bool parse(std::string *source, linkNode *path, std::string *last);
     void *act(stack *values);
-    ASTNode *copy();
+    regexNode *copy();
 };
 
 class sequenceNode : public ASTNode {
@@ -323,7 +323,7 @@ public:
     sequenceNode(Args... nodes);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    sequenceNode *copy();
     ~sequenceNode();
 };
 
@@ -337,7 +337,7 @@ public:
     swapNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    swapNode *copy();
 };
 
 class testNode : public ASTNode {
@@ -346,7 +346,7 @@ public:
     testNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    testNode *copy();
     ~testNode();
 };
 
@@ -356,7 +356,7 @@ public:
     testNotNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    testNotNode *copy();
     ~testNotNode();
 };
 
@@ -366,7 +366,7 @@ public:
     zeroOrMoreNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
-    ASTNode *copy();
+    zeroOrMoreNode *copy();
     ~zeroOrMoreNode();
 };
 #endif

@@ -71,7 +71,6 @@ int stack::getSize() {
 }
 
 stack::~stack() {
-    std::cout << "stack" << std::endl;
     if (size > 0) {
         stackLink *current = head;
         stackLink *toDel = head;
