@@ -370,8 +370,9 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     *blank = *str;
     linkNode *dummy = new linkNode();
     linkNode *current = link;
-    std::string sample = *source;
-    if (current->getChild()->parse(&sample, dummy, blank)) {
+    std::string *sample = new std::string;
+    *sample = *source;
+    if (current->getChild()->parse(sample, dummy, blank)) {
         delete dummy;
         *str = "";
         delete blank;
@@ -379,8 +380,8 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     }
     while (current->hasSibling) {
         current = current->getSibling();
-        sample = *source;
-        if (current->getChild()->parse(&sample, dummy, blank)) {
+        *sample = *source;
+        if (current->getChild()->parse(sample, dummy, blank)) {
             delete dummy;
             *str = "";
             delete blank;
@@ -873,12 +874,13 @@ testNode::testNode(ASTNode *node) {
 }
 
 bool testNode::parse(std::string *source, linkNode *path, std::string *str) {
-    std::string copy = *source;
+    std::string *copy = new std::string;
+    *copy = *source;
     linkNode *dummy = new linkNode();
     std::string *temp = new std::string;
     *temp = *str;
 
-    if (link->getChild()->parse(&copy, dummy, temp)) {
+    if (link->getChild()->parse(copy, dummy, temp)) {
         delete dummy;
         delete temp;
         return true;
@@ -911,12 +913,13 @@ testNotNode::testNotNode(ASTNode *node) {
 }
 
 bool testNotNode::parse(std::string *source, linkNode *path, std::string *str) {
-    std::string copy = *source;
+    std::string *copy = new std::string;
+    *copy = *source;
     linkNode *dummy = new linkNode();
     std::string *temp = new std::string;
     *temp = *str;
 
-    if (link->getChild()->parse(&copy, dummy, temp)) {
+    if (link->getChild()->parse(copy, dummy, temp)) {
         delete dummy;
         delete temp;
         return false;

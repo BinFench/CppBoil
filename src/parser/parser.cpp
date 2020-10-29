@@ -22,8 +22,10 @@ parser::parser() {
 bool parser::parse(std::string source, rule *root) {
     linkNode *parsePath = new linkNode();
     std::string *str = new std::string();
+    std::string *src = new std::string();
+    *src = source;
     ASTNode *node = root->getNode();
-    if (node->parse(&source, parsePath, str)) {
+    if (node->parse(src, parsePath, str)) {
         if (!hasStack) {
             values = new stack();
         } else {
