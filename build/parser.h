@@ -12,8 +12,7 @@ ASTNode *makeNode(char ch);
 ASTNode *makeNode(std::string str);
 ASTNode *makeNode(rule *Rule);
 
-class parser
-{
+class parser {
 public:
     stack *values;
     bool hasStack;
@@ -65,56 +64,47 @@ public:
 };
 
 template <typename... Args>
-rule *parser::anyOf(Args... rules)
-{
+rule *parser::anyOf(Args... rules) {
     return new rule(new anyOfNode(makeNode(rules)...));
 }
 
 template <typename... Args>
-rule *parser::firstOf(Args... rules)
-{
+rule *parser::firstOf(Args... rules) {
     return new rule(new firstOfNode(makeNode(rules)...));
 };
 
 template <typename T>
-rule *parser::ignoreCase(T text)
-{
+rule *parser::ignoreCase(T text) {
     return new rule(new ignoreCaseNode(text));
 }
 
 template <typename... Args>
-rule *parser::noneOf(Args... rules)
-{
+rule *parser::noneOf(Args... rules) {
     return new rule(new noneOfNode(makeNode(rules)...));
 }
 
 template <typename... Args>
-rule *parser::oneOrMore(Args... rules)
-{
+rule *parser::oneOrMore(Args... rules) {
     return new rule(new oneOrMoreNode(makeNode(rules)...));
 }
 
 template <typename... Args>
-rule *parser::push(std::function<void *(arg *)> func, Args... Arg)
-{
+rule *parser::push(std::function<void *(arg *)> func, Args... Arg) {
     return push(func, new arg(Arg...));
 }
 
 template <typename... Args>
-rule *parser::sequence(Args... rules)
-{
+rule *parser::sequence(Args... rules) {
     return new rule(new sequenceNode(makeNode(rules)...));
 }
 
 template <typename... Args>
-rule *parser::zeroOrMore(Args... rules)
-{
+rule *parser::zeroOrMore(Args... rules) {
     return new rule(new zeroOrMoreNode(makeNode(rules)...));
 }
 
 template <typename... Args>
-rule *recursion(std::function<rule *(arg *)> func, Args... Arg)
-{
+rule *recursion(std::function<rule *(arg *)> func, Args... Arg) {
     return recursion(func, new arg(Arg...));
 }
 

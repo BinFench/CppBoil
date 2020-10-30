@@ -48,7 +48,7 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *anyNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 anyNode *anyNode::copy() {
@@ -82,7 +82,7 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *anyOfNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 anyOfNode *anyOfNode::copy() {
@@ -140,7 +140,7 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
 }
 
 void *charRangeNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 charRangeNode *charRangeNode::copy() {
@@ -177,7 +177,7 @@ bool chNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *chNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 chNode *chNode::copy() {
@@ -196,7 +196,7 @@ bool emptyNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *emptyNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 emptyNode *emptyNode::copy() {
@@ -217,7 +217,7 @@ bool EOINode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *EOINode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 EOINode *EOINode::copy() {
@@ -251,7 +251,7 @@ bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *firstOfNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 firstOfNode *firstOfNode::copy() {
@@ -317,7 +317,7 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
 }
 
 void *ignoreCaseNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 ignoreCaseNode *ignoreCaseNode::copy() {
@@ -396,7 +396,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *noneOfNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 noneOfNode *noneOfNode::copy() {
@@ -418,7 +418,7 @@ bool nothingNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *nothingNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 nothingNode *nothingNode::copy() {
@@ -456,7 +456,7 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
 }
 
 void *oneOrMoreNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 oneOrMoreNode *oneOrMoreNode::copy() {
@@ -488,7 +488,7 @@ bool optionalNode::parse(std::string *source, linkNode *path, std::string *str) 
 }
 
 void *optionalNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 optionalNode *optionalNode::copy() {
@@ -685,7 +685,7 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
 }
 
 void *recursionNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 recursionNode *recursionNode::copy() {
@@ -737,7 +737,7 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last) {
 }
 
 void *regexNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 regexNode *regexNode::copy() {
@@ -791,7 +791,7 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str) 
 }
 
 void *sequenceNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 sequenceNode *sequenceNode::copy() {
@@ -828,7 +828,7 @@ bool stringNode::parse(std::string *source, linkNode *path, std::string *match) 
 }
 
 void *stringNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 stringNode *stringNode::copy() {
@@ -858,7 +858,7 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str) {
 
 void *swapNode::act(stack *values) {
     values->swap();
-    return nullptr;
+    return values;
 }
 
 swapNode *swapNode::copy() {
@@ -891,7 +891,7 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *testNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 testNode *testNode::copy() {
@@ -930,7 +930,7 @@ bool testNotNode::parse(std::string *source, linkNode *path, std::string *str) {
 }
 
 void *testNotNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 testNotNode *testNotNode::copy() {
@@ -978,7 +978,7 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
 }
 
 void *zeroOrMoreNode::act(stack *values) {
-    return nullptr;
+    return values;
 }
 
 zeroOrMoreNode *zeroOrMoreNode::copy() {

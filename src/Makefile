@@ -1,5 +1,5 @@
 CC=g++
-CPPFLAGS= -std=c++17 -fPIC
+CPPFLAGS= -std=c++17 -fPIC -Wall -Wextra
 DEPS = arg.h parser/rule.h parser/parser.h ast/ASTNode.h ast/linkNode.h stack/stack.h stackLink.h
 OBJ = parser/parser.o ast/ASTNode.o ast/linkNode.o parser/rule.o stack/stack.o stack/stackLink.o arg.o
 

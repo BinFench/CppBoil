@@ -26,6 +26,7 @@ bool parser::parse(std::string source, rule *root) {
     *src = source;
     ASTNode *node = root->getNode();
     if (node->parse(src, parsePath, str)) {
+        std::cout << "Done parsing" << std::endl;
         if (!hasStack) {
             values = new stack();
         } else {
@@ -47,15 +48,17 @@ bool parser::parse(std::string source, rule *root) {
             }
         }
 
+        std::cout << "Done acting" << std::endl;
         delete parsePath;
-        delete root->getNode();
+        std::cout << "Done parsePath" << std::endl;
+        delete node;
         delete root;
         delete str;
         return true;
     }
 
     delete parsePath;
-    delete root->getNode();
+    delete node;
     delete root;
     delete str;
     return false;

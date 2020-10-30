@@ -66,11 +66,9 @@ linkNode *linkNode::copy() {
 
 linkNode::~linkNode() {
     if (hasChild) {
-        std::cout << "child" << std::endl;
         delete ASTChildren;
     }
     if (hasSibling) {
-        std::cout << "sibling" << std::endl;
         delete sibling;
     }
 }

@@ -9,10 +9,10 @@
 
 #ifndef ASTNODE_H
 #define ASTNODE_H
+
 class arg;
 
-class ASTNode
-{
+class ASTNode {
 public:
     virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
     virtual void *act(stack *values) { return nullptr; };
@@ -34,8 +34,7 @@ protected:
     void populate(std::string type, char node);
 };
 
-class chNode : public ASTNode
-{
+class chNode : public ASTNode {
 public:
     char ch;
     chNode(char ch);
@@ -43,8 +42,7 @@ public:
     void *act(stack *values);
 };
 
-class stringNode : public ASTNode
-{
+class stringNode : public ASTNode {
 public:
     std::string str;
     stringNode(std::string str);
@@ -53,16 +51,13 @@ public:
 };
 
 template <typename... Args>
-void ASTNode::populate(std::string type, ASTNode *node, Args... nodes)
-{
-    if (id != type)
-    {
+void ASTNode::populate(std::string type, ASTNode *node, Args... nodes) {
+    if (id != type) {
         id = type;
         link = new linkNode();
         link->attach(node);
     }
-    else
-    {
+    else {
         linkNode *sibling = new linkNode();
         sibling->attach(node);
         link->getTail()->append(sibling);
@@ -71,16 +66,12 @@ void ASTNode::populate(std::string type, ASTNode *node, Args... nodes)
 }
 
 template <typename... Args>
-void ASTNode::populate(std::string type, std::string node, Args... nodes)
-{
-    if (id != type)
-    {
+void ASTNode::populate(std::string type, std::string node, Args... nodes) {
+    if (id != type) {
         id = type;
         link = new linkNode();
         link->attach(new stringNode(node));
-    }
-    else
-    {
+    } else {
         linkNode *sibling = new linkNode();
         sibling->attach(new stringNode(node));
         link->getTail()->append(sibling);
@@ -89,16 +80,12 @@ void ASTNode::populate(std::string type, std::string node, Args... nodes)
 }
 
 template <typename... Args>
-void ASTNode::populate(std::string type, char node, Args... nodes)
-{
-    if (id != type)
-    {
+void ASTNode::populate(std::string type, char node, Args... nodes) {
+    if (id != type) {
         id = type;
         link = new linkNode();
         link->attach(new chNode(node));
-    }
-    else
-    {
+    } else {
         linkNode *sibling = new linkNode();
         sibling->attach(new chNode(node));
         link->getTail()->append(sibling);
@@ -106,16 +93,14 @@ void ASTNode::populate(std::string type, char node, Args... nodes)
     populate(type, nodes...);
 }
 
-class anyNode : public ASTNode
-{
+class anyNode : public ASTNode {
 public:
     anyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class anyOfNode : public ASTNode
-{
+class anyOfNode : public ASTNode {
 public:
     template <typename... Args>
     anyOfNode(Args... nodes);
@@ -124,13 +109,11 @@ public:
 };
 
 template <typename... Args>
-anyOfNode::anyOfNode(Args... nodes)
-{
+anyOfNode::anyOfNode(Args... nodes) {
     populate("anyOf", nodes...);
 }
 
-class charRangeNode : public ASTNode
-{
+class charRangeNode : public ASTNode {
 public:
     charRangeNode(char begin, char end);
     charRangeNode(chNode *begin, char end);
@@ -140,24 +123,21 @@ public:
     void *act(stack *values);
 };
 
-class emptyNode : public ASTNode
-{
+class emptyNode : public ASTNode {
 public:
     emptyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class EOINode : public ASTNode
-{
+class EOINode : public ASTNode {
 public:
     EOINode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class firstOfNode : public ASTNode
-{
+class firstOfNode : public ASTNode {
 public:
     template <typename... Args>
     firstOfNode(Args... nodes);
@@ -166,13 +146,11 @@ public:
 };
 
 template <typename... Args>
-firstOfNode::firstOfNode(Args... nodes)
-{
+firstOfNode::firstOfNode(Args... nodes) {
     populate("firstOf", nodes...);
 }
 
-class ignoreCaseNode : public ASTNode
-{
+class ignoreCaseNode : public ASTNode {
 public:
     ignoreCaseNode(char ch);
     ignoreCaseNode(chNode *ch);
@@ -182,8 +160,7 @@ public:
     void *act(stack *values);
 };
 
-class matchNode : public ASTNode
-{
+class matchNode : public ASTNode {
 public:
     matchNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -193,8 +170,7 @@ protected:
     std::string match;
 };
 
-class noneOfNode : public ASTNode
-{
+class noneOfNode : public ASTNode {
 public:
     template <typename... Args>
     noneOfNode(Args... nodes);
@@ -203,53 +179,46 @@ public:
 };
 
 template <typename... Args>
-noneOfNode::noneOfNode(Args... nodes)
-{
+noneOfNode::noneOfNode(Args... nodes) {
     populate("noneOf", nodes...);
 }
 
-class nothingNode : public ASTNode
-{
+class nothingNode : public ASTNode {
 public:
     nothingNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class oneOrMoreNode : public ASTNode
-{
+class oneOrMoreNode : public ASTNode {
 public:
     oneOrMoreNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class optionalNode : public ASTNode
-{
+class optionalNode : public ASTNode {
 public:
     optionalNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class peekNode : public ASTNode
-{
+class peekNode : public ASTNode {
 public:
     peekNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class popNode : public ASTNode
-{
+class popNode : public ASTNode {
 public:
     popNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class pushNode : public ASTNode
-{
+class pushNode : public ASTNode {
 public:
     pushNode(std::function<void *(arg *)> func, arg *Arg);
     template <typename... Args>
@@ -271,13 +240,11 @@ protected:
 };
 
 template <typename... Args>
-pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg)
-{
+pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg) {
     pushNode(func, new arg(Arg...));
 }
 
-class recursionNode : public ASTNode
-{
+class recursionNode : public ASTNode {
 public:
     recursionNode(std::function<rule *()> func);
     recursionNode(std::function<rule *(arg *)> func, arg *Arg);
@@ -294,13 +261,11 @@ protected:
 };
 
 template <typename... Args>
-recursionNode::recursionNode(std::function<rule *(arg *)> func, Args... Arg)
-{
+recursionNode::recursionNode(std::function<rule *(arg *)> func, Args... Arg) {
     recursionNode(func, new arg(Arg...));
 }
 
-class regexNode : public ASTNode
-{
+class regexNode : public ASTNode {
 public:
     std::string str;
     regexNode(std::string str);
@@ -308,8 +273,7 @@ public:
     void *act(stack *values);
 };
 
-class sequenceNode : public ASTNode
-{
+class sequenceNode : public ASTNode {
 public:
     template <typename... Args>
     sequenceNode(Args... nodes);
@@ -318,37 +282,32 @@ public:
 };
 
 template <typename... Args>
-sequenceNode::sequenceNode(Args... nodes)
-{
+sequenceNode::sequenceNode(Args... nodes) {
     populate("sequence", nodes...);
 }
 
-class swapNode : public ASTNode
-{
+class swapNode : public ASTNode {
 public:
     swapNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class testNode : public ASTNode
-{
+class testNode : public ASTNode {
 public:
     testNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class testNotNode : public ASTNode
-{
+class testNotNode : public ASTNode {
 public:
     testNotNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
 };
 
-class zeroOrMoreNode : public ASTNode
-{
+class zeroOrMoreNode : public ASTNode {
 public:
     zeroOrMoreNode(ASTNode *node);
     bool parse(std::string *source, linkNode *path, std::string *str);
