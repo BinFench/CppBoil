@@ -1,5 +1,4 @@
 #include "stack.h"
-#include <iostream>
 
 stack::stack() {
     size = 0;

@@ -1,5 +1,4 @@
 #include "parser.h"
-#include <iostream>
 
 ASTNode *makeNode(char ch) {
     return new chNode(ch);
@@ -26,7 +25,6 @@ bool parser::parse(std::string source, rule *root) {
     *src = source;
     ASTNode *node = root->getNode();
     if (node->parse(src, parsePath, str)) {
-        std::cout << "Done parsing" << std::endl;
         if (!hasStack) {
             values = new stack();
         } else {
@@ -48,17 +46,15 @@ bool parser::parse(std::string source, rule *root) {
             }
         }
 
-        std::cout << "Done acting" << std::endl;
         delete parsePath;
-        std::cout << "Done parsePath" << std::endl;
-        delete node;
+        //delete node;
         delete root;
         delete str;
         return true;
     }
 
     delete parsePath;
-    delete node;
+    //delete node;
     delete root;
     delete str;
     return false;

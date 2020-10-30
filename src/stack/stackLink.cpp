@@ -1,19 +1,16 @@
 #include "stackLink.h"
 #include "../parser/rule.h"
 #include "../ast/ASTNode.h"
-#include <iostream>
 
 stackLink::stackLink() {
     isRule = false;
     hasItem = false;
     test = "neither";
-    std::cout << "create: " << isRule << std::endl;
 }
 
 stackLink *stackLink::copy() {
     stackLink *newLink = new stackLink();
     newLink->isRule = isRule;
-    std::cout << "copy: " << isRule << std::endl;
     newLink->hasItem = hasItem;
     newLink->test = "copy";
 
@@ -42,10 +39,7 @@ void *stackLink::get(int i, stack *values) {
 }
 
 stackLink::~stackLink() {
-    std::cout << "stackLink" << std::endl;
-    std::cout << isRule << std::endl;
     if (isRule) {
         delete ((rule *)item);
     }
-    std::cout << "Deleted" << std::endl;
 }

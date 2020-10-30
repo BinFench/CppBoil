@@ -1,5 +1,4 @@
 #include "arg.h"
-#include <iostream>
 
 arg::arg() {
     size = 0;

@@ -6,7 +6,6 @@
 #include <functional>
 #include <regex>
 #include <string>
-#include <iostream>
 
 #ifndef ASTNODE_H
 #define ASTNODE_H
@@ -17,7 +16,7 @@ class ASTNode {
 public:
     virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
     virtual void *act(stack *values) { return nullptr; };
-    virtual ASTNode *copy() {std::cout << "Yo this shouldn't happen" << std::endl; return nullptr;};
+    virtual ASTNode *copy() {return nullptr;};
     std::string getId();
     ASTNode();
     virtual ~ASTNode() {}
