@@ -1,3 +1,9 @@
+/*
+    Author: Ben Finch
+    Email: benjamincfinch@gmail.com
+    Desc: declaration of arg.  Arg holds any amount of parameters to be used
+          in a stack or recursion function.
+*/
 #include "stack/stackLink.h"
 #include "stack/stack.h"
 #include "parser/rule.h"
@@ -8,6 +14,7 @@
 #define ARG_H
 
 class arg {
+    //  Arg class holds any amount of items as parameters.
 public:
     arg();
     template <typename... Args>
@@ -29,6 +36,7 @@ protected:
     void checkRule(stackLink *add, void *par);
 };
 
+//  Can pass any number of items into arg.
 template <typename... Args>
 arg::arg(Args... args) {
     size = 0;
@@ -37,6 +45,7 @@ arg::arg(Args... args) {
     populate(link, args...);
 }
 
+//  Parametric recursion to build linked list of arguments.
 template <typename T, typename... Args>
 void arg::populate(stackLink *current, T par, Args... Arg) {
     stackLink *add = new stackLink();
@@ -55,6 +64,7 @@ void arg::populate(stackLink *current, T par, Args... Arg) {
     }
 };
 
+//  Base case of parametric recursion for arg population.
 template <typename T>
 void arg::populate(stackLink *current, T par) {
     stackLink *add = new stackLink();
