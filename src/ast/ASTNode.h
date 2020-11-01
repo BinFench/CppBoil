@@ -1,3 +1,11 @@
+/*
+    Author: Ben Finch
+    Email: benjamincfinch@gmail.com
+    Desc: declaration of AST nodes.
+          ASTNodes implement their own rules for parsing,
+          such as a sequence of other rules or one or more
+          occurences of sub rules.
+*/
 #include "linkNode.h"
 #include "../stack/stack.h"
 #include "../parser/rule.h"
@@ -10,9 +18,11 @@
 #ifndef ASTNODE_H
 #define ASTNODE_H
 
+//  Forward declaration, see arg.h
 class arg;
 
 class ASTNode {
+    //  The parent class, contains all the common functions and members to be overridden.
 public:
     virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
     virtual void *act(stack *values) { return nullptr; };
@@ -37,6 +47,7 @@ protected:
 };
 
 class chNode : public ASTNode {
+    //  Node for matching a single char.
 public:
     chNode();
     char ch;
@@ -47,6 +58,7 @@ public:
 };
 
 class stringNode : public ASTNode {
+    //  Node for matching a string
 public:
     stringNode();
     std::string str;
@@ -56,6 +68,10 @@ public:
     stringNode *copy();
 };
 
+/*
+  Parametric recursion function.  Constructs tree with parent 
+  node and n number of children.
+*/
 template <typename... Args>
 void ASTNode::populate(std::string type, ASTNode *node, Args... nodes) {
     if (id != type) {
@@ -68,9 +84,11 @@ void ASTNode::populate(std::string type, ASTNode *node, Args... nodes) {
         sibling->attach(node);
         link->getTail()->append(sibling);
     }
+    //  Parametric recursion: Function is called with one less parameter.
     populate(type, nodes...);
 }
 
+//  Same as above function, but string is converted to stringNode.
 template <typename... Args>
 void ASTNode::populate(std::string type, std::string node, Args... nodes) {
     if (id != type) {
@@ -85,6 +103,7 @@ void ASTNode::populate(std::string type, std::string node, Args... nodes) {
     populate(type, nodes...);
 }
 
+//  Same as above function, but char is converted to chNode.
 template <typename... Args>
 void ASTNode::populate(std::string type, char node, Args... nodes) {
     if (id != type) {
@@ -100,6 +119,7 @@ void ASTNode::populate(std::string type, char node, Args... nodes) {
 }
 
 class anyNode : public ASTNode {
+    //  Node for matching any char
 public:
     anyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -108,6 +128,7 @@ public:
 };
 
 class anyOfNode : public ASTNode {
+    //  Node for matching any subnode.
 public:
     anyOfNode();
     template <typename... Args>
@@ -118,12 +139,14 @@ public:
     ~anyOfNode();
 };
 
+//  Uses parametric recursion to construct tree.
 template <typename... Args>
 anyOfNode::anyOfNode(Args... nodes) {
     populate("anyOf", nodes...);
 }
 
 class charRangeNode : public ASTNode {
+    //  Node to match any char in a range.
 public:
     charRangeNode();
     charRangeNode(char begin, char end);
@@ -137,6 +160,7 @@ public:
 };
 
 class emptyNode : public ASTNode {
+    //  Node to match anything.
 public:
     emptyNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -145,6 +169,7 @@ public:
 };
 
 class EOINode : public ASTNode {
+    //  Node to match end of input (empty string).
 public:
     EOINode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -153,6 +178,7 @@ public:
 };
 
 class firstOfNode : public ASTNode {
+    //  Node to match first accepted subnode.
 public:
     firstOfNode();
     template <typename... Args>
@@ -163,12 +189,14 @@ public:
     ~firstOfNode();
 };
 
+//  Uses parametric recursion to construct tree.
 template <typename... Args>
 firstOfNode::firstOfNode(Args... nodes) {
     populate("firstOf", nodes...);
 }
 
 class ignoreCaseNode : public ASTNode {
+    //  Node to match a char or string despite capitalization.
 public:
     ignoreCaseNode();
     ignoreCaseNode(char ch);
@@ -182,6 +210,7 @@ public:
 };
 
 class matchNode : public ASTNode {
+    //  Stack action node.  stores last matched string.
 public:
     matchNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -193,6 +222,7 @@ protected:
 };
 
 class noneOfNode : public ASTNode {
+    //  Node to match any character that doesn't pass any subnodes.
 public:
     noneOfNode();
     template <typename... Args>
@@ -203,12 +233,14 @@ public:
     ~noneOfNode();
 };
 
+//  Uses parametric recursion to construct tree.
 template <typename... Args>
 noneOfNode::noneOfNode(Args... nodes) {
     populate("noneOf", nodes...);
 }
 
 class nothingNode : public ASTNode {
+    //  Node that matches nothing.
 public:
     nothingNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -217,6 +249,7 @@ public:
 };
 
 class oneOrMoreNode : public ASTNode {
+    //  Node that matches at least one occurance of subnode.
 public:
     oneOrMoreNode();
     oneOrMoreNode(ASTNode *node);
@@ -227,6 +260,7 @@ public:
 };
 
 class optionalNode : public ASTNode {
+    //  Node that always matches, optionally matches subnode.
 public:
     optionalNode();
     optionalNode(ASTNode *node);
@@ -237,6 +271,7 @@ public:
 };
 
 class peekNode : public ASTNode {
+    //  Stack action node.  Gets reference to item at top of stack.
 public:
     peekNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -245,6 +280,7 @@ public:
 };
 
 class popNode : public ASTNode {
+    //  Stack action node.  Pops item from top of stack.
 public:
     popNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -253,6 +289,7 @@ public:
 };
 
 class pushNode : public ASTNode {
+    //  Stack action node.  Pushes item to top of stack.
 public:
     pushNode();
     pushNode(std::function<void *(arg *)> func, arg *Arg);
@@ -276,12 +313,14 @@ protected:
     stack *temp;
 };
 
+//  Uses parametric recursion to construct tree.
 template <typename... Args>
 pushNode::pushNode(std::function<void *(arg *)> func, Args... Arg) {
     pushNode(func, new arg(Arg...));
 }
 
 class recursionNode : public ASTNode {
+    //  Node to match parent node.  Prevents infinite recursive loop.
 public:
     recursionNode();
     recursionNode(std::function<rule *()> func);
@@ -300,12 +339,14 @@ protected:
     arg *Arg;
 };
 
+//  Uses parametric recursion to construct tree.
 template <typename... Args>
 recursionNode::recursionNode(std::function<rule *(arg *)> func, Args... Arg) {
     recursionNode(func, new arg(Arg...));
 }
 
 class regexNode : public ASTNode {
+    //  Node to match string to regular expression.
 public:
     regexNode();
     std::string str;
@@ -316,6 +357,7 @@ public:
 };
 
 class sequenceNode : public ASTNode {
+    //  Node to match string to sequence of sub nodes.
 public:
     sequenceNode();
     template <typename... Args>
@@ -326,12 +368,14 @@ public:
     ~sequenceNode();
 };
 
+//  Uses parametric recursion to construct tree.
 template <typename... Args>
 sequenceNode::sequenceNode(Args... nodes) {
     populate("sequence", nodes...);
 }
 
 class swapNode : public ASTNode {
+    //  Stack action node.  Swaps item at top of stack with item below.
 public:
     swapNode();
     bool parse(std::string *source, linkNode *path, std::string *str);
@@ -340,6 +384,7 @@ public:
 };
 
 class testNode : public ASTNode {
+    //  Node that tests if string matches subnode.  Does not update parse state.
 public:
     testNode();
     testNode(ASTNode *node);
@@ -350,6 +395,7 @@ public:
 };
 
 class testNotNode : public ASTNode {
+    //  Node that tests if string fails subnode.  Does not update parse state.
 public:
     testNotNode();
     testNotNode(ASTNode *node);
@@ -360,6 +406,7 @@ public:
 };
 
 class zeroOrMoreNode : public ASTNode {
+    //  Node that matches zero or multiple occurrances of sub nodes.
 public:
     zeroOrMoreNode();
     zeroOrMoreNode(ASTNode *node);

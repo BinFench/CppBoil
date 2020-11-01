@@ -1,3 +1,10 @@
+/*
+    Author: Ben Finch
+    Email: benjamincfinch@gmail.com
+    Desc: implementation of linked list nodes defined in linkNode.h
+          linkNodes store the children of ASTNodes, as well as a linked list
+          of stack actions for post parse processing.
+*/
 #include "linkNode.h"
 #include "ASTNode.h"
 
@@ -24,6 +31,7 @@ linkNode *linkNode::getSibling() {
     return sibling;
 }
 
+//  Get very end of linked list.
 linkNode *linkNode::getTail() {
     if (hasSibling) {
         linkNode *current = getSibling();
@@ -35,6 +43,7 @@ linkNode *linkNode::getTail() {
     return this;
 }
 
+//  Remove last node in linked list.
 void linkNode::removeTail() {
     if (hasSibling) {
         linkNode *current = getSibling();
@@ -51,6 +60,7 @@ void linkNode::removeTail() {
     }
 }
 
+//  Copy entire linked list from this node to tail.
 linkNode *linkNode::copy() {
     linkNode *toRet = new linkNode();
     if (hasChild) {
