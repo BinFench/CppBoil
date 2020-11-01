@@ -1,11 +1,26 @@
+/*
+    Author: Ben Finch
+    Email: benjamincfinch@gmail.com
+    Desc: implementation of AST nodes defined in ASTNode.h
+          ASTNodes implement their own rules for parsing,
+          such as a sequence of other rules or one or more
+          occurences of sub rules.
+*/
 #include "ASTNode.h"
 #include "../arg.h"
 #include <iostream>
 
+//  AST: Parent node
+//  Virtual constructor, unused in production.
 ASTNode::ASTNode() {
     id = "AST";
 }
 
+/*  
+  Base case of parametric recursion.  Populates given node with children nodes.
+  type: which derived ASTNode is being populated
+  node: child node to be added to parent
+*/
 void ASTNode::populate(std::string type, ASTNode *node) {
     if (id != type)
     {
@@ -21,10 +36,20 @@ void ASTNode::populate(std::string type, ASTNode *node) {
     }
 }
 
+/*  
+  Base case of parametric recursion.  Populates given node with children nodes.
+  type: which derived ASTNode is being populated
+  node: string to be converted to child node
+*/
 void ASTNode::populate(std::string type, std::string node) {
     populate(type, new stringNode(node));
 }
 
+/*  
+  Base case of parametric recursion.  Populates given node with children nodes.
+  type: which derived ASTNode is being populated
+  node: char to be converted to child node
+*/
 void ASTNode::populate(std::string type, char node) {
     populate(type, new chNode(node));
 }
@@ -33,10 +58,19 @@ std::string ASTNode::getId() {
     return id;
 }
 
+//  any: Accepts any char if parse string is not empty
+
 anyNode::anyNode() {
     id = "any";
 }
 
+/*
+  Parse string at location 0.  anyNode accepts any character as long as it exists.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is updated as the accepted character in this parse.
+*/
 bool anyNode::parse(std::string *source, linkNode *path, std::string *str) {
     if (source->length() > 0) {
         *str = source->at(0);
@@ -47,18 +81,30 @@ bool anyNode::parse(std::string *source, linkNode *path, std::string *str) {
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *anyNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 anyNode *anyNode::copy() {
     return new anyNode;
 }
+
+//  anyOf: Accept any char if the parse string is accepted by any child node.
 
 anyOfNode::anyOfNode() {
     id = "anyOf";
 }
 
+/*
+  Parse string at location 0.  anyOfNode accepts any character as long as the
+  string is matched by a child node.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted character in this parse.
+*/
 bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = link;
     std::string *copy = new std::string;
@@ -68,6 +114,8 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str) {
         delete copy;
         return true;
     }
+    
+    //  If first child does not accept, traverse siblings and parse.
     while (current->hasSibling) {
         current = current->getSibling();
         if (current->getChild()->parse(source, path, copy)) {
@@ -76,24 +124,31 @@ bool anyOfNode::parse(std::string *source, linkNode *path, std::string *str) {
             return true;
         }
     }
+
+    //  No children accept, so string is rejected
     *str = "";
     delete copy;
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *anyOfNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 anyOfNode *anyOfNode::copy() {
     anyOfNode *toRet = new anyOfNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 anyOfNode::~anyOfNode() {
     delete link;
 }
+
+//  charRange: Accepts any char if it exists in the range defined by children nodes.
 
 charRangeNode::charRangeNode() {
     id = "charRange";
@@ -115,6 +170,13 @@ charRangeNode::charRangeNode(chNode *begin, chNode *end) {
     populate("charRange", begin, end);
 }
 
+/*
+  Parse string at location 0.  charRangeNode accepts any char as it fits the range.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is updated as the accepted character in this parse.
+*/
 bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str) {
     if (source->length() == 0) {
         *str = "";
@@ -139,19 +201,24 @@ bool charRangeNode::parse(std::string *source, linkNode *path, std::string *str)
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *charRangeNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 charRangeNode *charRangeNode::copy() {
     charRangeNode *toRet = new charRangeNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 charRangeNode::~charRangeNode() {
     delete link;
 }
+
+// Ch: Accept only a matching char.
 
 chNode::chNode() {
     id = "char";
@@ -162,6 +229,13 @@ chNode::chNode(char nch) {
     ch = nch;
 }
 
+/*
+  Parse string at location 0.  chNode accepts only a matching char.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is updated as the accepted character in this parse.
+*/
 bool chNode::parse(std::string *source, linkNode *path, std::string *str) {
     if (source->length() == 0) {
         *str = "";
@@ -176,37 +250,59 @@ bool chNode::parse(std::string *source, linkNode *path, std::string *str) {
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *chNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 chNode *chNode::copy() {
     chNode *toRet = new chNode();
     toRet->ch = ch;
     return toRet;
 }
 
+//  empty: Matches anything, does not cut parse string
+
 emptyNode::emptyNode() {
     id = "empty";
 }
 
+/*
+  Parse string at location 0.  emptyNode always accepts.
+  Return true always
+  source: string to be parsed.  May be substring of parent node.  Unused here
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is cleared here.
+*/
 bool emptyNode::parse(std::string *source, linkNode *path, std::string *str) {
     *str = "";
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *emptyNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 emptyNode *emptyNode::copy() {
     return new emptyNode();
 }
+
+//  EOI: Only matches end of input (empty parse string)
 
 EOINode::EOINode() {
     id = "EOI";
 }
 
+/*
+  Parse string at location 0.  EOINode accepts only a matching char.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.  Unused here
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is cleared here.
+*/
 bool EOINode::parse(std::string *source, linkNode *path, std::string *str) {
     if (source->length() == 0) {
         *str = "";
@@ -216,18 +312,30 @@ bool EOINode::parse(std::string *source, linkNode *path, std::string *str) {
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *EOINode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 EOINode *EOINode::copy() {
     return new EOINode();
 }
+
+// firstOf: Matches the first rule that accepts the parse string
 
 firstOfNode::firstOfNode() {
     id = "firstOf";
 }
 
+/*
+  Parse string at location 0.  firstOfNode accepts any string as long as the
+  string is matched by a child node.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
 bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = link;
     std::string *copy = new std::string();
@@ -250,19 +358,27 @@ bool firstOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *firstOfNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 firstOfNode *firstOfNode::copy() {
     firstOfNode *toRet = new firstOfNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 firstOfNode::~firstOfNode() {
     delete link;
 }
+
+/*
+    ignoreCase: Matches any char or string as long as it is accepted by the child
+    while ignoring capitalization.
+*/
 
 ignoreCaseNode::ignoreCaseNode() {
     id = "ignoreCase";
@@ -284,6 +400,14 @@ ignoreCaseNode::ignoreCaseNode(stringNode *str) {
     populate("ignoreCase", str);
 }
 
+/*
+  Parse string at location 0.  firstOfNode accepts any string as long as the
+  string is matched by a child node ignoring capitalization.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
 bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str) {
     if (source->length() == 0) {
         *str = "";
@@ -298,6 +422,7 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
         *str = "";
         return false;
     } else {
+        //  Convert the source string and node string to lowercase to compare.
         std::string data = ((stringNode *)link->getChild())->str;
         std::transform(data.begin(), data.end(), data.begin(),
                        [](unsigned char c) { return tolower(c); });
@@ -316,24 +441,36 @@ bool ignoreCaseNode::parse(std::string *source, linkNode *path, std::string *str
     }
 }
 
+//  Unused implementation, exists for debug.
 void *ignoreCaseNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 ignoreCaseNode *ignoreCaseNode::copy() {
     ignoreCaseNode *toRet = new ignoreCaseNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 ignoreCaseNode::~ignoreCaseNode() {
     delete link;
 }
+
+// match: a stack action node.  Stores the last matched parse string.
 
 matchNode::matchNode() {
     id = "match";
 }
 
+/*
+  matchNode always passes parse, stores last matched parse for stack.
+  Always returns true.
+  source: string to be parsed.  May be substring of parent node.  Unused here.
+  path: linked list of stack actions for tokenizing input.  Copy of node appended.
+  str: string of last matched parse.  Is stored and cleared.
+*/
 bool matchNode::parse(std::string *source, linkNode *path, std::string *str) {
     match = *str;
     linkNode *current = path->getTail();
@@ -342,6 +479,8 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str) {
         current->append(next);
         current = next;
     }
+    //  Because the parser deletes the parsed rule and the stack actions, a copy
+    //  is needed so that there is no double free error.
     matchNode *clone = copy();
     current->attach(clone);
 
@@ -349,23 +488,36 @@ bool matchNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+// Return the stored matched parse as void pointer.
 void *matchNode::act(stack *values) {
     std::string *toRet = new std::string();
     *toRet = match;
     return static_cast<void *>(toRet);
 }
 
+//  Dedicated copy function for memory management.
 matchNode *matchNode::copy() {
     matchNode *toRet = new matchNode();
     toRet->match = match;
     return toRet;
 }
 
+//  noneOf:  Accepts any char as long as the parse string does not match any child rules.
+
 noneOfNode::noneOfNode() {
     id = "noneOf";
 }
 
+/*
+  Parse string at location 0.  nondeOfNode accepts any character as long as the
+  string is not matched by any child node.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is updated as the accepted character in this parse.
+*/
 bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
+    //  We copy all parameters as we don't want the child nodes to update parse state.
     std::string *blank = new std::string;
     *blank = *str;
     linkNode *dummy = new linkNode();
@@ -378,6 +530,8 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
         delete blank;
         return false;
     }
+
+    //  If first child doesn't match, we traverse siblings.
     while (current->hasSibling) {
         current = current->getSibling();
         *sample = *source;
@@ -388,6 +542,8 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
             return false;
         }
     }
+
+    //  None of the children match, so a char can be accepted.
     *str = source->at(0);
     source->erase(0, 1);
     delete dummy;
@@ -395,35 +551,48 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *noneOfNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 noneOfNode *noneOfNode::copy() {
     noneOfNode *toRet = new noneOfNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 noneOfNode::~noneOfNode() {
     delete link;
 }
+
+//  nothing:  Accepts nothing.
 
 nothingNode::nothingNode() {
     id = "nothing";
 }
 
+// No used parameters, never accepts.
 bool nothingNode::parse(std::string *source, linkNode *path, std::string *str) {
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *nothingNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 nothingNode *nothingNode::copy() {
     return new nothingNode();
 }
+
+/*
+  oneOrMore: This rule matches multiple occurances of its sub rules.
+  At least one occurance must match for parse to accept.
+*/
 
 oneOrMoreNode::oneOrMoreNode() {
     id = "oneOrMore";
@@ -433,12 +602,21 @@ oneOrMoreNode::oneOrMoreNode(ASTNode *node) {
     populate("oneOrMore", node);
 }
 
+/*
+  Parse string at location 0.  oneOrMoreNode accepts each occurance of the subrules.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted total string in this parse.
+*/
 bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str) {
+    //  A copy of the match string is made since the final match is a sum of all child matches.
     std::string *blank = new std::string();
     std::string *total = new std::string();
     *blank = *str;
     bool first = true;
     do {
+        //  Parse only fails if child parse fails the first time.
         if (first && link->getChild()->parse(source, path, blank)) {
             first = false;
         } else if (first) {
@@ -448,6 +626,7 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
             return false;
         }
         *total += *blank;
+        //  Parsing repeats until it fails, and total parsing accepts.
     } while (link->getChild()->parse(source, path, blank));
     *str = *total;
     delete blank;
@@ -455,19 +634,24 @@ bool oneOrMoreNode::parse(std::string *source, linkNode *path, std::string *str)
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *oneOrMoreNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 oneOrMoreNode *oneOrMoreNode::copy() {
     oneOrMoreNode *toRet = new oneOrMoreNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 oneOrMoreNode::~oneOrMoreNode() {
     delete link;
 }
+
+//  optional:  Will pass no matter what, though can optionally parse based on subrule.
 
 optionalNode::optionalNode() {
     id = "optional";
@@ -477,6 +661,13 @@ optionalNode::optionalNode(ASTNode *node) {
     populate("optional", node);
 }
 
+/*
+  Parse string at location 0.  optionalNode optionally accepts subrule.
+  Return true no matter what
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
 bool optionalNode::parse(std::string *source, linkNode *path, std::string *str) {
     std::string *copy = new std::string();
     *copy = *str;
@@ -487,24 +678,30 @@ bool optionalNode::parse(std::string *source, linkNode *path, std::string *str) 
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *optionalNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 optionalNode *optionalNode::copy() {
     optionalNode *toRet = new optionalNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 optionalNode::~optionalNode() {
     delete link;
 }
+
+//  peek: Stack action gives reference to item on top of stack.
 
 peekNode::peekNode() {
     id = "peek";
 }
 
+//  Parse always passes, appends copy of node to linked list.
 bool peekNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = path->getTail();
     if (current->hasChild) {
@@ -519,18 +716,23 @@ bool peekNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+//  Returns reference to item at top of stack.
 void *peekNode::act(stack *values) {
     return values->peek();
 }
 
+//  Dedicated copy function for memory management.
 peekNode *peekNode::copy() {
     return new peekNode();
 }
+
+//  pop:  Stack action returns item from top of stack.
 
 popNode::popNode() {
     id = "pop";
 }
 
+//  Parse always passes, appends copy of node to linked list
 bool popNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = path->getTail();
     if (current->hasChild) {
@@ -545,17 +747,26 @@ bool popNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+//  Return item from top of stack.
 void *popNode::act(stack *values) {
     return values->pop();
 }
 
+//  Dedicated copy function for memory management.
 popNode *popNode::copy() {
     return new popNode();
 }
 
+//  push: Stack action pushes item to top of stack.
+
 pushNode::pushNode() {
     id = "push";
 }
+
+/*
+  Because a given item can be pushed multiple times, the constructor recieves
+  a function with or without arguments that constructs an object to push.
+*/
 
 pushNode::pushNode(std::function<void *(arg *)> func, arg *nArg) {
     id = "push";
@@ -578,6 +789,7 @@ pushNode::pushNode(rule *text) {
     match = text;
 }
 
+//  Returns the item to be pushed to the stack.
 void *pushNode::push() {
     if (which == "func") {
         if (hasArgs) {
@@ -585,12 +797,14 @@ void *pushNode::push() {
         }
         return func();
     }
+    //  If the item is a match, pop, or peek node, apply stack actions to be pushed.
     if (match->getNode()->getId() == "match" || match->getNode()->getId() == "pop" || match->getNode()->getId() == "peek") {
         return match->getNode()->act(temp);
     }
-    return match;
+    return match->copy();
 }
 
+// Push stored item to stack.
 void *pushNode::act(stack *values) {
     temp = values;
     if (which == "func" && hasArgs) {
@@ -600,6 +814,7 @@ void *pushNode::act(stack *values) {
     return values;
 }
 
+//  Parse always passes, updates child node if needed, appends copy to linked list.
 bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = path->getTail();
     if (current->hasChild) {
@@ -619,6 +834,7 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+//  Dedicated copy function for memory management.
 pushNode *pushNode::copy() {
     pushNode *clone = new pushNode();
     if (which == "match") {
@@ -639,6 +855,7 @@ pushNode *pushNode::copy() {
     return clone;
 }
 
+//  Destructor: Node may have child or args to be cleaned.
 pushNode::~pushNode() {
     if (which == "match") {
         delete match;
@@ -648,9 +865,16 @@ pushNode::~pushNode() {
     }
 }
 
+/*
+  recursion: used to call a parent rule without an infinite loop.  Rule is not
+  constructed until it needs to be evaluated for parsing.
+*/
+
 recursionNode::recursionNode() {
     id = "recursion";
 }
+
+//  In case parent rule takes arguments, there is the option to pass args.
 
 recursionNode::recursionNode(std::function<rule *()> nfunc) {
     func = nfunc;
@@ -663,6 +887,13 @@ recursionNode::recursionNode(std::function<rule *(arg *)> func, arg *nArg) {
     hasArgs = true;
 }
 
+/*
+  Parse string at location 0.  recursionNode parses with parent rule.
+  Return true if parse accepts, false otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
 bool recursionNode::parse(std::string *source, linkNode *path, std::string *str) {
     rule *eval;
     if (hasArgs) {
@@ -684,10 +915,12 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
     return test;
 }
 
+//  Unused implementation, exists for debug.
 void *recursionNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 recursionNode *recursionNode::copy() {
     recursionNode *clone = new recursionNode();
     if (hasArgs) {
@@ -701,11 +934,14 @@ recursionNode *recursionNode::copy() {
     return clone;
 }
 
+//  Destructor: Node may have args to be cleaned.
 recursionNode::~recursionNode() {
     if (hasArgs) {
         delete Arg;
     }
 }
+
+//  regex: parses string based on regex.
 
 regexNode::regexNode() {
     id = "regex";
@@ -716,12 +952,20 @@ regexNode::regexNode(std::string nstr) {
     str = nstr;
 }
 
+/*
+  Parse string at location 0.  regexNode parses with regex from constructor.
+  Return true if parse accepts, false otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Not used here.
+  last: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
 bool regexNode::parse(std::string *source, linkNode *path, std::string *last) {
     try {
         std::regex rgx(str);
         std::smatch match;
         const std::string eval = *source;
 
+        // Test string on regex, update last match on regex success.
         if (std::regex_search(eval.begin(), eval.end(), match, rgx) && source->find(match[1]) == 0) {
             *last = source->substr(0, match[1].length());
             source->erase(0, match[1].length());
@@ -730,28 +974,41 @@ bool regexNode::parse(std::string *source, linkNode *path, std::string *last) {
         *last = "";
         return false;
     } catch (const std::regex_error &e) {
+        //  error with defined regex
         std::cout << "regex_error caught: " << e.what() << std::endl;
         *last = "";
         return false;
     }
 }
 
+//  Unused implementation, exists for debug.
 void *regexNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 regexNode *regexNode::copy() {
     regexNode *toRet = new regexNode();
     toRet->str = str;
     return toRet;
 }
 
+//  sequence: parses based on multiple sub rules in a sequence.
+
 sequenceNode::sequenceNode() {
     id = "sequence";
 }
 
+/*
+  Parse string at location 0.  sequenceNode parses with each child node.
+  Return true if parse accepts, false otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  last: string of last matched parse.  Is updated as the total accepted string in this parse.
+*/
 bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = link;
+    //  All parameters are copied
     linkNode *dummy = new linkNode();
     std::string *copy = new std::string;
     std::string *blank = new std::string;
@@ -767,7 +1024,9 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str) 
         *str = "";
         return false;
     }
+    //  Append sub match to total match
     *ret += *blank;
+    //  Traverse siblings if first node matched
     while (current->hasSibling) {
         current = current->getSibling();
         if (!current->getChild()->parse(copy, dummy, blank)) {
@@ -782,6 +1041,7 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str) 
     }
 
     *source = *copy;
+    //  Append child link list to parameter link list
     path->getTail()->append(dummy);
     *str = *ret;
     delete copy;
@@ -790,19 +1050,24 @@ bool sequenceNode::parse(std::string *source, linkNode *path, std::string *str) 
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *sequenceNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 sequenceNode *sequenceNode::copy() {
     sequenceNode *toRet = new sequenceNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 sequenceNode::~sequenceNode() {
     delete link;
 }
+
+//  string: parses string if it matches string in node.
 
 stringNode::stringNode() {
     id = "string";
@@ -813,6 +1078,13 @@ stringNode::stringNode(std::string nstr) {
     str = nstr;
 }
 
+/*
+  Parse string at location 0.  stringNode accepts only a matching string.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
 bool stringNode::parse(std::string *source, linkNode *path, std::string *match) {
     if (source->length() == 0) {
         *match = "";
@@ -827,20 +1099,25 @@ bool stringNode::parse(std::string *source, linkNode *path, std::string *match) 
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *stringNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 stringNode *stringNode::copy() {
     stringNode *toRet = new stringNode();
     toRet->str = str;
     return toRet;
 }
 
+//  swap: Stack action that swaps the top of the stack with the node below it.
+
 swapNode::swapNode() {
     id = "swap";
 }
 
+//  Parse always accepts, append copy of node to link list.
 bool swapNode::parse(std::string *source, linkNode *path, std::string *str) {
     linkNode *current = path->getTail();
     if (current->hasChild)
@@ -856,14 +1133,18 @@ bool swapNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+//  Swap top two items on stack
 void *swapNode::act(stack *values) {
     values->swap();
     return values;
 }
 
+//  Dedicated copy function for memory management.
 swapNode *swapNode::copy() {
     return new swapNode();
 }
+
+//  test: Parses string based on sub rule but will not update parse state.
 
 testNode::testNode() {
     id = "test";
@@ -873,7 +1154,15 @@ testNode::testNode(ASTNode *node) {
     populate("test", node);
 }
 
+/*
+  Parse string at location 0.  testNode accepts only if subrule accepts.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Unused here.
+*/
 bool testNode::parse(std::string *source, linkNode *path, std::string *str) {
+    //  All parameters copied so as not to be updated by child.
     std::string *copy = new std::string;
     *copy = *source;
     linkNode *dummy = new linkNode();
@@ -890,20 +1179,27 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str) {
     return false;
 }
 
+//  Unused implementation, exists for debug.
 void *testNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 testNode *testNode::copy() {
     testNode *toRet = new testNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 testNode::~testNode() {
     delete link;
 }
 
+/*
+  testNot: Parses string based on sub rule but will not update parse state.
+  Opposite of test, this passes if subrule does not pass.
+*/
 testNotNode::testNotNode() {
     id = "testNot";
 }
@@ -912,7 +1208,15 @@ testNotNode::testNotNode(ASTNode *node) {
     populate("testNot", node);
 }
 
+/*
+  Parse string at location 0.  testNode accepts only if subrule rejects.
+  Return true if string is accepted.  False otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Unused here.
+  str: string of last matched parse.  Unused here.
+*/
 bool testNotNode::parse(std::string *source, linkNode *path, std::string *str) {
+    //  All parameters are copied so as not to be updated by child.
     std::string *copy = new std::string;
     *copy = *source;
     linkNode *dummy = new linkNode();
@@ -929,19 +1233,27 @@ bool testNotNode::parse(std::string *source, linkNode *path, std::string *str) {
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *testNotNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 testNotNode *testNotNode::copy() {
     testNotNode *toRet = new testNotNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 testNotNode::~testNotNode() {
     delete link;
 }
+
+/*
+  zeroOrMode: This rule matches multiple occurances of its sub rules.
+  This rule accepts no matter what.  No occurance necessary. 
+*/
 
 zeroOrMoreNode::zeroOrMoreNode() {
     id = "zeroOrMore";
@@ -951,6 +1263,13 @@ zeroOrMoreNode::zeroOrMoreNode(ASTNode *node) {
     populate("zeroOrMore", node);
 }
 
+/*
+  Parse string at location 0.  zeroOrMoreNode accepts each occurance of the subrules.
+  Return true no matter what.
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to child for appending.
+  str: string of last matched parse.  Is updated as the accepted total string in this parse.
+*/
 bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str) {
     std::string *blank = new std::string();
     std::string *total = new std::string();
@@ -968,7 +1287,9 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
             delete total;
             return true;
         }
+        //  Append sub match to total match.
         *total += *blank;
+        //  Continue parsing until parsing fails.
     } while (link->getChild()->parse(source, path, blank));
     *str = *total;
     delete copy;
@@ -977,16 +1298,19 @@ bool zeroOrMoreNode::parse(std::string *source, linkNode *path, std::string *str
     return true;
 }
 
+//  Unused implementation, exists for debug.
 void *zeroOrMoreNode::act(stack *values) {
     return values;
 }
 
+//  Dedicated copy function for memory management.
 zeroOrMoreNode *zeroOrMoreNode::copy() {
     zeroOrMoreNode *toRet = new zeroOrMoreNode();
     toRet->link = link->copy();
     return toRet;
 }
 
+//  Destructor: Because this has child nodes, those need to be cleaned up.
 zeroOrMoreNode::~zeroOrMoreNode() {
     delete link;
 }

@@ -1,9 +1,16 @@
+/*
+    Author: Ben Finch
+    Email: benjamincfinch@gmail.com
+    Desc: implementation of stack defined in stack.h.  Stack holds the tokenized
+          items from parsing a source string.
+*/
 #include "stack.h"
 
 stack::stack() {
     size = 0;
 }
 
+//  Push item onto stack, flag if the item is a rule or not.
 void stack::push(void *item) {
     stackLink *link = new stackLink();
     link->test = "stack";
@@ -20,6 +27,7 @@ void stack::push(void *item) {
     size++;
 }
 
+//  Push item onto stack, flag if the item is a rule or not.
 void stack::push(rule *item) {
     stackLink *link = new stackLink();
     link->test = "stack";
@@ -36,6 +44,7 @@ void stack::push(rule *item) {
     size++;
 }
 
+//  Pop item from top of stack.
 void *stack::pop() {
     if (size > 0) {
         stackLink *link = head;
@@ -48,6 +57,7 @@ void *stack::pop() {
     return nullptr;
 }
 
+//  Swap item from top of stack with item below.
 void stack::swap() {
     if (size >= 2) {
         stackLink *link1 = head;
@@ -58,6 +68,7 @@ void stack::swap() {
     }
 }
 
+//  Get reference to item at top of stack.
 void *stack::peek() {
     if (size > 0) {
         return head->item;
@@ -69,6 +80,7 @@ int stack::getSize() {
     return size;
 }
 
+//  Destructor: deletes nodes in stack, items are the user's responsibility.
 stack::~stack() {
     if (size > 0) {
         stackLink *current = head;
