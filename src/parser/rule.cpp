@@ -8,6 +8,7 @@
 #include "../ast/ASTNode.h"
 
 rule::rule(ASTNode *nnode) {
+    hasNode = true;
     node = nnode;
 }
 

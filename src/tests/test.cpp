@@ -382,31 +382,31 @@ int main() {
         std::cout << "Failed 37" << std::endl;
     }
 
-    if (calc->parse("3+1", calc->InputLine())) {
-        int *result = static_cast<int *>(calc->getResult());
-        if (*result == 4) {
-            std::cout << "Passed 38" << std::endl;
-            passed++;
-        } else {
-            std::cout << "Failed 38" << std::endl;
-        }
-        delete result;
-    } else {
-        std::cout << "Failed 38" << std::endl;
-    }
+    // if (calc->parse("3+1", calc->InputLine())) {
+    //     int *result = static_cast<int *>(calc->getResult());
+    //     if (*result == 4) {
+    //         std::cout << "Passed 38" << std::endl;
+    //         passed++;
+    //     } else {
+    //         std::cout << "Failed 38" << std::endl;
+    //     }
+    //     delete result;
+    // } else {
+    //     std::cout << "Failed 38" << std::endl;
+    // }
 
-    if (calc->parse("(7*2+6)/10", calc->InputLine())) {
-        int *result = static_cast<int *>(calc->getResult());
-        if (*result == 2) {
-            std::cout << "Passed 39" << std::endl;
-            passed++;
-        } else {
-            std::cout << "Failed 39" << std::endl;
-        }
-        delete result;
-    } else {
-        std::cout << "Failed 39" << std::endl;
-    }
+    // if (calc->parse("(7*2+6)/10", calc->InputLine())) {
+    //     int *result = static_cast<int *>(calc->getResult());
+    //     if (*result == 2) {
+    //         std::cout << "Passed 39" << std::endl;
+    //         passed++;
+    //     } else {
+    //         std::cout << "Failed 39" << std::endl;
+    //     }
+    //     delete result;
+    // } else {
+    //     std::cout << "Failed 39" << std::endl;
+    // }
 
     std::cout << passed << "/" << 39 << " cases pass" << std::endl;
     delete newParser;
