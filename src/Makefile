@@ -29,7 +29,7 @@ lib: CBoil.o
 	$(CC) -shared -o libCBoil.so $^ $(CPPFLAGS)
 	sudo cp libCBoil.so /usr/lib
 	sudo mkdir /usr/include/CBoilBuild
-	sudo cp ../build/* /usr/include/CBoilBuild/
+	sudo cp ../CBoilBuild/* /usr/include/CBoilBuild/
 	sudo cp ../CBoil /usr/include/CBoil
 	sudo chmod 0755 /usr/lib/libCBoil.so
 	rm CBoil.o
