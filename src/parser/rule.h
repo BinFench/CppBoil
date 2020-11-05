@@ -14,10 +14,11 @@ class ASTNode;
 class rule {
     //  Container for ASTNodes.
     public:
-        rule() {};
+        rule(){};
         rule(ASTNode *node);
         ASTNode* getNode();
         rule *copy();
+        bool hasNode;
 
     protected:
         ASTNode *node;

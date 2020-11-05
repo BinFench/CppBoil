@@ -49,6 +49,7 @@ void *stackLink::get(int i, stack *values) {
 //  Destructor: Only destructs item if it is rule.  Else, is user's responsibility.
 stackLink::~stackLink() {
     if (isRule) {
+        delete ((rule *)item)->getNode();
         delete ((rule *)item);
     }
 }
