@@ -53,9 +53,6 @@ void linkNode::removeTail() {
             current = current->getSibling();
         }
         prev->hasSibling = false;
-        if (current->hasChild) {
-            delete current->ASTChildren;
-        }
         delete current;
     }
 }

@@ -25,6 +25,7 @@ void *arg::get(int i) {
 void arg::checkRule(stackLink *add, rule *par) {
     add->isRule = true;
     add->item = par->copy();
+    delete par->getNode();
     delete par;
 }
 
@@ -59,7 +60,6 @@ arg::~arg() {
     if (size > 0) {
         stackLink *current = link;
         stackLink *toDel = link;
-
         for (int i = 0; i < size - 1; i++) {
             current = current->link;
             delete toDel;

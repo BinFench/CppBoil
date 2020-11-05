@@ -1,5 +1,5 @@
 CC=g++
-CPPFLAGS= -std=c++17 -fPIC
+CPPFLAGS= -g -std=c++17 -fPIC
 DEPS = arg.h parser/rule.h parser/parser.h ast/ASTNode.h ast/linkNode.h stack/stack.h stackLink.h
 OBJ = parser/parser.o ast/ASTNode.o ast/linkNode.o parser/rule.o stack/stack.o stack/stackLink.o arg.o
 
@@ -13,7 +13,7 @@ tests/test.cpp: CBoil.o
 
 memtest: CBoil.o
 	$(CC) tests/test.cpp $^ -o test -std=c++17
-	valgrind --tool=memcheck --leak-check=yes ./test
+	valgrind --tool=memcheck --leak-check=full --track-origins=yes ./test
 
 CBoil.o: $(OBJ)
 	ld -r $^ -o CBoil.o
