@@ -222,6 +222,7 @@ charRangeNode::~charRangeNode() {
 
 chNode::chNode() {
     id = "char";
+    ch = '\0';
 }
 
 chNode::chNode(char nch) {
@@ -528,6 +529,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
         delete dummy;
         *str = "";
         delete blank;
+        delete sample;
         return false;
     }
 
@@ -539,6 +541,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
             delete dummy;
             *str = "";
             delete blank;
+            delete sample;
             return false;
         }
     }
@@ -548,6 +551,7 @@ bool noneOfNode::parse(std::string *source, linkNode *path, std::string *str) {
     source->erase(0, 1);
     delete dummy;
     delete blank;
+    delete sample;
     return true;
 }
 
@@ -761,6 +765,8 @@ popNode *popNode::copy() {
 
 pushNode::pushNode() {
     id = "push";
+    hasArgs = false;
+    which = "";
 }
 
 /*
@@ -786,6 +792,7 @@ pushNode::pushNode(std::function<void *()> nfunc) {
 pushNode::pushNode(rule *text) {
     id = "push";
     which = "match";
+    hasArgs = false;
     match = text;
 }
 
@@ -799,9 +806,11 @@ void *pushNode::push() {
     }
     //  If the item is a match, pop, or peek node, apply stack actions to be pushed.
     if (match->getNode()->getId() == "match" || match->getNode()->getId() == "pop" || match->getNode()->getId() == "peek") {
-        return match->getNode()->act(temp);
+        void *res = match->getNode()->act(temp);
+        return res;
     }
-    return match->copy();
+    rule *res = match->copy();
+    return res;
 }
 
 // Push stored item to stack.
@@ -826,6 +835,8 @@ bool pushNode::parse(std::string *source, linkNode *path, std::string *str) {
         linkNode *dummy = new linkNode();
         std::string *empty = new std::string();
         match->getNode()->parse(empty, dummy, str);
+        delete empty;
+        delete dummy;
     }
 
     current->attach(copy());
@@ -858,6 +869,7 @@ pushNode *pushNode::copy() {
 //  Destructor: Node may have child or args to be cleaned.
 pushNode::~pushNode() {
     if (which == "match") {
+        delete match->getNode();
         delete match;
     }
     if (hasArgs) {
@@ -910,6 +922,7 @@ bool recursionNode::parse(std::string *source, linkNode *path, std::string *str)
     } else {
         *str = "";
     }
+    delete eval->getNode();
     delete eval;
     delete copy;
     return test;
@@ -1172,10 +1185,12 @@ bool testNode::parse(std::string *source, linkNode *path, std::string *str) {
     if (link->getChild()->parse(copy, dummy, temp)) {
         delete dummy;
         delete temp;
+        delete copy;
         return true;
     }
     delete dummy;
     delete temp;
+    delete copy;
     return false;
 }
 
@@ -1226,10 +1241,12 @@ bool testNotNode::parse(std::string *source, linkNode *path, std::string *str) {
     if (link->getChild()->parse(copy, dummy, temp)) {
         delete dummy;
         delete temp;
+        delete copy;
         return false;
     }
     delete dummy;
     delete temp;
+    delete copy;
     return true;
 }
 

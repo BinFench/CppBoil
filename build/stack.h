@@ -1,3 +1,9 @@
+/*
+    Author: Ben Finch
+    Email: benjamincfinch@gmail.com
+    Desc: declaration of stack.  Stack holds the tokenized
+          items from parsing a source string.
+*/
 #include "stackLink.h"
 #include "rule.h"
 
@@ -5,6 +11,7 @@
 #define STACK_H
 
 class stack {
+    //  Container for tokenized items.
 public:
     stack();
     void push(void *item);
@@ -13,6 +20,7 @@ public:
     void swap();
     void *peek();
     int getSize();
+    ~stack();
 
 protected:
     int size;

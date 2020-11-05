@@ -20,6 +20,7 @@ ASTNode *makeNode(std::string str) {
 //  Utility function to get node out of rule, and delete rule for memory save.
 ASTNode *makeNode(rule *Rule) {
     ASTNode *toRet = Rule->getNode();
+    Rule->hasNode = false;
     delete Rule;
     return toRet;
 }
@@ -68,17 +69,19 @@ bool parser::parse(std::string source, rule *root) {
 
         delete parsePath;
         //  TODO: Fix memory leaks without segfault.
-        //delete node;
+        delete node;
         delete root;
         delete str;
+        delete src; 
         return true;
     }
 
     delete parsePath;
     //  TODO: Fix memory leaks without segfault.
-    //delete node;
+    delete node;
     delete root;
     delete str;
+    delete src;
     return false;
 }
 
@@ -104,15 +107,15 @@ rule *parser::charRange(char begin, char end) {
 }
 
 rule *parser::charRange(rule *begin, char end) {
-    return new rule(new charRangeNode((chNode *)begin->getNode(), end));
+    return new rule(new charRangeNode((chNode *)makeNode(begin), end));
 }
 
 rule *parser::charRange(char begin, rule *end) {
-    return new rule(new charRangeNode(begin, (chNode *)end->getNode()));
+    return new rule(new charRangeNode(begin, (chNode *)makeNode(end)));
 }
 
 rule *parser::charRange(rule *begin, rule *end) {
-    return new rule(new charRangeNode((chNode *)begin->getNode(), (chNode *)end->getNode()));
+    return new rule(new charRangeNode((chNode *)makeNode(begin), (chNode *)makeNode(end)));
 }
 
 //  Rule to always accept.
@@ -176,12 +179,12 @@ rule *parser::swap() {
 
 //  Rule to test if parse passes subrule without updating parse state.
 rule *parser::test(rule *text) {
-    return new rule(new testNode((ASTNode *)text->getNode()));
+    return new rule(new testNode(makeNode(text)));
 }
 
 //  Rule to test if parse fails subrule without updating parse state.
 rule *parser::testNot(rule *text) {
-    return new rule(new testNotNode((ASTNode *)text->getNode()));
+    return new rule(new testNotNode(makeNode(text)));
 }
 
 //  Rule to parse string with parent rule.  Use to prevent infinite recursion.
