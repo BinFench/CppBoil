@@ -409,6 +409,7 @@ int main() {
     }
 
     std::cout << passed << "/" << 39 << " cases pass" << std::endl;
+    std::cout << calc->InputLine()->getNode()->prettyPrint() << std::endl;
     delete newParser;
     delete calc;
     return 0;

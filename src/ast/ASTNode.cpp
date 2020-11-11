@@ -91,6 +91,11 @@ anyNode *anyNode::copy() {
     return new anyNode;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string anyNode::prettyPrint() {
+    return "[*]";
+}
+
 //  anyOf: Accept any char if the parse string is accepted by any child node.
 
 anyOfNode::anyOfNode() {
@@ -140,6 +145,23 @@ void *anyOfNode::act(stack *values) {
 anyOfNode *anyOfNode::copy() {
     anyOfNode *toRet = new anyOfNode();
     toRet->link = link->copy();
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string anyOfNode::prettyPrint() {
+    std::string toRet = "{TEST ";
+    bool first = true;
+    linkNode *current = link;
+    do {
+        if (!first) {
+            current = current->getSibling();
+            toRet += " | ";
+        }
+        first = false;
+        toRet += current->getChild()->prettyPrint();
+    } while(current->hasSibling);
+    toRet += " TEST}[*]";
     return toRet;
 }
 
@@ -213,6 +235,16 @@ charRangeNode *charRangeNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string charRangeNode::prettyPrint() {
+    std::string toRet = "[";
+    toRet += link->getChild()->prettyPrint();
+    toRet += "-";
+    toRet += link->getSibling()->getChild()->prettyPrint();
+    toRet += "]";
+    return toRet;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 charRangeNode::~charRangeNode() {
     delete link;
@@ -263,6 +295,20 @@ chNode *chNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string chNode::prettyPrint() {
+    std::string toRet = "[";
+    if (ch == '[' || ch == '{' || ch == '}' || ch == ']') {
+        toRet += "'";
+        toRet += ch;
+        toRet += "']";
+        return toRet;
+    }
+    toRet += ch;
+    toRet += "]";
+    return toRet;
+}
+
 //  empty: Matches anything, does not cut parse string
 
 emptyNode::emptyNode() {
@@ -289,6 +335,11 @@ void *emptyNode::act(stack *values) {
 //  Dedicated copy function for memory management.
 emptyNode *emptyNode::copy() {
     return new emptyNode();
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string emptyNode::prettyPrint() {
+    return "{SIGMA}";
 }
 
 //  EOI: Only matches end of input (empty parse string)
@@ -321,6 +372,11 @@ void *EOINode::act(stack *values) {
 //  Dedicated copy function for memory management.
 EOINode *EOINode::copy() {
     return new EOINode();
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string EOINode::prettyPrint() {
+    return "{EOI}";
 }
 
 // firstOf: Matches the first rule that accepts the parse string
@@ -368,6 +424,24 @@ void *firstOfNode::act(stack *values) {
 firstOfNode *firstOfNode::copy() {
     firstOfNode *toRet = new firstOfNode();
     toRet->link = link->copy();
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string firstOfNode::prettyPrint() {
+    std::string toRet = "{SCAN ";
+    bool first = true;
+    linkNode *current = link;
+
+    do {
+        if (!first) {
+            current = current->getSibling();
+            toRet += " SCAN} | {SCAN ";
+        }
+        first = false;
+        toRet += current->getChild()->prettyPrint();
+    } while(current->hasSibling);
+    toRet += " SCAN}";
     return toRet;
 }
 
@@ -454,6 +528,14 @@ ignoreCaseNode *ignoreCaseNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string ignoreCaseNode::prettyPrint() {
+    std::string toRet = "^[";
+    toRet += link->getChild()->prettyPrint();
+    toRet += "]";
+    return toRet;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 ignoreCaseNode::~ignoreCaseNode() {
     delete link;
@@ -501,6 +583,11 @@ matchNode *matchNode::copy() {
     matchNode *toRet = new matchNode();
     toRet->match = match;
     return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string matchNode::prettyPrint() {
+    return "{MATCH}";
 }
 
 //  noneOf:  Accepts any char as long as the parse string does not match any child rules.
@@ -567,6 +654,23 @@ noneOfNode *noneOfNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string noneOfNode::prettyPrint() {
+    std::string toRet = "{TESTNOT ";
+    bool first = true;
+    linkNode *current = link;
+    do {
+        if (!first) {
+            current = current->getSibling();
+            toRet += " | ";
+        }
+        first = false;
+        toRet += current->getChild()->prettyPrint();
+    } while(current->hasSibling);
+    toRet += " TESTNOT}[*]";
+    return toRet;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 noneOfNode::~noneOfNode() {
     delete link;
@@ -591,6 +695,11 @@ void *nothingNode::act(stack *values) {
 //  Dedicated copy function for memory management.
 nothingNode *nothingNode::copy() {
     return new nothingNode();
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string nothingNode::prettyPrint() {
+    return "{FAIL}";
 }
 
 /*
@@ -650,6 +759,14 @@ oneOrMoreNode *oneOrMoreNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string oneOrMoreNode::prettyPrint() {
+    std::string toRet = "[";
+    toRet += link->getChild()->prettyPrint();
+    toRet += "]+";
+    return toRet;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 oneOrMoreNode::~oneOrMoreNode() {
     delete link;
@@ -694,6 +811,14 @@ optionalNode *optionalNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string optionalNode::prettyPrint() {
+    std::string toRet = "[";
+    toRet += link->getChild()->prettyPrint();
+    toRet += "]?";
+    return toRet;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 optionalNode::~optionalNode() {
     delete link;
@@ -730,6 +855,11 @@ peekNode *peekNode::copy() {
     return new peekNode();
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string peekNode::prettyPrint() {
+    return "{PEEK}";
+}
+
 //  pop:  Stack action returns item from top of stack.
 
 popNode::popNode() {
@@ -759,6 +889,11 @@ void *popNode::act(stack *values) {
 //  Dedicated copy function for memory management.
 popNode *popNode::copy() {
     return new popNode();
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string popNode::prettyPrint() {
+    return "{POP}";
 }
 
 //  push: Stack action pushes item to top of stack.
@@ -866,6 +1001,11 @@ pushNode *pushNode::copy() {
     return clone;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string pushNode::prettyPrint() {
+    return "{PUSH}";
+}
+
 //  Destructor: Node may have child or args to be cleaned.
 pushNode::~pushNode() {
     if (which == "match") {
@@ -947,6 +1087,12 @@ recursionNode *recursionNode::copy() {
     return clone;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string recursionNode::prettyPrint() {
+    //  TODO: Determine rule being recursed
+    return "{R}";
+}
+
 //  Destructor: Node may have args to be cleaned.
 recursionNode::~recursionNode() {
     if (hasArgs) {
@@ -1003,6 +1149,14 @@ void *regexNode::act(stack *values) {
 regexNode *regexNode::copy() {
     regexNode *toRet = new regexNode();
     toRet->str = str;
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string regexNode::prettyPrint() {
+    std::string toRet = "[\\";
+    toRet += str;
+    toRet += "]";
     return toRet;
 }
 
@@ -1075,6 +1229,23 @@ sequenceNode *sequenceNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string sequenceNode::prettyPrint() {
+    std::string toRet = "[";
+    bool first = true;
+    linkNode *current = link;
+    do {
+        if (!first) {
+            current = current->getSibling();
+            toRet += ", ";
+        }
+        first = false;
+        toRet += current->getChild()->prettyPrint();
+    } while(current->hasSibling);
+    toRet += "]";
+    return toRet;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 sequenceNode::~sequenceNode() {
     delete link;
@@ -1124,6 +1295,14 @@ stringNode *stringNode::copy() {
     return toRet;
 }
 
+//  Dedicated pretty print to convert to Production Rule Form
+std::string stringNode::prettyPrint() {
+    std::string toRet = "[";
+    toRet += str;
+    toRet += "]";
+    return toRet;
+}
+
 //  swap: Stack action that swaps the top of the stack with the node below it.
 
 swapNode::swapNode() {
@@ -1155,6 +1334,11 @@ void *swapNode::act(stack *values) {
 //  Dedicated copy function for memory management.
 swapNode *swapNode::copy() {
     return new swapNode();
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string swapNode::prettyPrint() {
+    return "{SWAP}";
 }
 
 //  test: Parses string based on sub rule but will not update parse state.
@@ -1203,6 +1387,14 @@ void *testNode::act(stack *values) {
 testNode *testNode::copy() {
     testNode *toRet = new testNode();
     toRet->link = link->copy();
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string testNode::prettyPrint() {
+    std::string toRet = "{TEST ";
+    toRet += link->getChild()->prettyPrint();
+    toRet += " TEST}";
     return toRet;
 }
 
@@ -1259,6 +1451,14 @@ void *testNotNode::act(stack *values) {
 testNotNode *testNotNode::copy() {
     testNotNode *toRet = new testNotNode();
     toRet->link = link->copy();
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string testNotNode::prettyPrint() {
+    std::string toRet = "{TESTNOT ";
+    toRet += link->getChild()->prettyPrint();
+    toRet += " TESTNOT}";
     return toRet;
 }
 
@@ -1324,6 +1524,14 @@ void *zeroOrMoreNode::act(stack *values) {
 zeroOrMoreNode *zeroOrMoreNode::copy() {
     zeroOrMoreNode *toRet = new zeroOrMoreNode();
     toRet->link = link->copy();
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string zeroOrMoreNode::prettyPrint() {
+    std::string toRet = "[";
+    toRet += link->getChild()->prettyPrint();
+    toRet += "]*";
     return toRet;
 }
 
