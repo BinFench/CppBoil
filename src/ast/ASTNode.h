@@ -342,13 +342,18 @@ class recursionNode : public ASTNode {
 public:
     recursionNode();
     recursionNode(std::function<rule *()> func);
+    recursionNode(int numid, std::function<rule *()> func);
     recursionNode(std::function<rule *(arg *)> func, arg *Arg);
+    recursionNode(int numid, std::function<rule *(arg *)> func, arg *Arg);
     template <typename... Args>
     recursionNode(std::function<rule *(arg *)> func, Args... Arg);
+    template <typename... Args>
+    recursionNode(int numid, std::function<rule *(arg *)> func, Args... Arg);
     bool parse(std::string *source, linkNode *path, std::string *str);
     void *act(stack *values);
     recursionNode *copy();
     std::string prettyPrint();
+    int rid;
     ~recursionNode();
 
 protected:
@@ -362,6 +367,12 @@ protected:
 template <typename... Args>
 recursionNode::recursionNode(std::function<rule *(arg *)> func, Args... Arg) {
     recursionNode(func, new arg(Arg...));
+}
+
+//  Uses parametric recursion to construct tree.
+template <typename... Args>
+recursionNode::recursionNode(int numid, std::function<rule *(arg *)> func, Args... Arg) {
+    recursionNode(numid, func, new arg(Arg...));
 }
 
 class regexNode : public ASTNode {

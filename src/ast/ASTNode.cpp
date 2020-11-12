@@ -1033,10 +1033,23 @@ recursionNode::recursionNode(std::function<rule *()> nfunc) {
     hasArgs = false;
 }
 
+recursionNode::recursionNode(int numid, std::function<rule *()> nfunc) {
+    func = nfunc;
+    hasArgs = false;
+    rid = numid;
+}
+
 recursionNode::recursionNode(std::function<rule *(arg *)> func, arg *nArg) {
     argFunc = func;
     Arg = nArg;
     hasArgs = true;
+}
+
+recursionNode::recursionNode(int numid, std::function<rule *(arg *)> func, arg *nArg) {
+    argFunc = func;
+    Arg = nArg;
+    hasArgs = true;
+    rid = numid;
 }
 
 /*
