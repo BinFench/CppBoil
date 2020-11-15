@@ -64,10 +64,6 @@ int *toi(arg *Arg) {
     return num;
 }
 
-rule *expr() {
-    return calc->Expression();
-}
-
 rule *calculator::InputLine() {
     return sequence(Expression(), EOI());
 }
@@ -95,7 +91,9 @@ rule *calculator::Factor() {
 }
 
 rule *calculator::Parens() {
-    return sequence('(', recursion(expr), ')');
+    return sequence('(', recursion([]() -> rule* {
+        return calc->Expression();
+    }), ')');
 }
 
 rule *calculator::Number() {
@@ -395,7 +393,9 @@ int main() {
         std::cout << "Failed 38" << std::endl;
     }
 
-    if (calc->parse("(7*2+6)/10", calc->InputLine())) {
+    rule *parseRule = calc->InputLine();
+    std::cout << parseRule->getNode()->prettyPrint() << std::endl;
+    if (calc->parse("(7*2+6)/10", parseRule)) {
         int *result = static_cast<int *>(calc->getResult());
         if (*result == 2) {
             std::cout << "Passed 39" << std::endl;
@@ -409,7 +409,6 @@ int main() {
     }
 
     std::cout << passed << "/" << 39 << " cases pass" << std::endl;
-    std::cout << calc->InputLine()->getNode()->prettyPrint() << std::endl;
     delete newParser;
     delete calc;
     return 0;

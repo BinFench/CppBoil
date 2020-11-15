@@ -96,6 +96,11 @@ std::string anyNode::prettyPrint() {
     return "[*]";
 }
 
+//  Applies simplification rules (N/A)
+ASTNode *anyNode::simplify() {
+    return this;
+}
+
 //  anyOf: Accept any char if the parse string is accepted by any child node.
 
 anyOfNode::anyOfNode() {
@@ -163,6 +168,11 @@ std::string anyOfNode::prettyPrint() {
     } while(current->hasSibling);
     toRet += " TEST}[*]";
     return toRet;
+}
+
+//  Applies simplification rules (transformation, children)
+ASTNode *anyOfNode::simplify() {
+    return this;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -245,6 +255,11 @@ std::string charRangeNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (N/A)
+ASTNode *charRangeNode::simplify() {
+    return this;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 charRangeNode::~charRangeNode() {
     delete link;
@@ -309,6 +324,11 @@ std::string chNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (N/A)
+ASTNode *chNode::simplify() {
+    return this;
+}
+
 //  empty: Matches anything, does not cut parse string
 
 emptyNode::emptyNode() {
@@ -340,6 +360,11 @@ emptyNode *emptyNode::copy() {
 //  Dedicated pretty print to convert to Production Rule Form
 std::string emptyNode::prettyPrint() {
     return "{SIGMA}";
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *emptyNode::simplify() {
+    return this;
 }
 
 //  EOI: Only matches end of input (empty parse string)
@@ -377,6 +402,11 @@ EOINode *EOINode::copy() {
 //  Dedicated pretty print to convert to Production Rule Form
 std::string EOINode::prettyPrint() {
     return "{EOI}";
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *EOINode::simplify() {
+    return this;
 }
 
 // firstOf: Matches the first rule that accepts the parse string
@@ -443,6 +473,11 @@ std::string firstOfNode::prettyPrint() {
     } while(current->hasSibling);
     toRet += " SCAN}";
     return toRet;
+}
+
+//  Applies simplification rules (transformation, children)
+ASTNode *firstOfNode::simplify() {
+    return this;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -536,6 +571,11 @@ std::string ignoreCaseNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (N/A)
+ASTNode *ignoreCaseNode::simplify() {
+    return this;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 ignoreCaseNode::~ignoreCaseNode() {
     delete link;
@@ -588,6 +628,11 @@ matchNode *matchNode::copy() {
 //  Dedicated pretty print to convert to Production Rule Form
 std::string matchNode::prettyPrint() {
     return "{MATCH}";
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *matchNode::simplify() {
+    return this;
 }
 
 //  noneOf:  Accepts any char as long as the parse string does not match any child rules.
@@ -671,6 +716,11 @@ std::string noneOfNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (transformation)
+ASTNode *noneOfNode::simplify() {
+    return this;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 noneOfNode::~noneOfNode() {
     delete link;
@@ -700,6 +750,11 @@ nothingNode *nothingNode::copy() {
 //  Dedicated pretty print to convert to Production Rule Form
 std::string nothingNode::prettyPrint() {
     return "{FAIL}";
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *nothingNode::simplify() {
+    return this;
 }
 
 /*
@@ -767,6 +822,11 @@ std::string oneOrMoreNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (children)
+ASTNode *oneOrMoreNode::simplify() {
+    return this;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 oneOrMoreNode::~oneOrMoreNode() {
     delete link;
@@ -819,6 +879,11 @@ std::string optionalNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (transformation)
+ASTNode *optionalNode::simplify() {
+    return this;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 optionalNode::~optionalNode() {
     delete link;
@@ -860,6 +925,11 @@ std::string peekNode::prettyPrint() {
     return "{PEEK}";
 }
 
+//  Applies simplification rules (N/A)
+ASTNode *peekNode::simplify() {
+    return this;
+}
+
 //  pop:  Stack action returns item from top of stack.
 
 popNode::popNode() {
@@ -894,6 +964,11 @@ popNode *popNode::copy() {
 //  Dedicated pretty print to convert to Production Rule Form
 std::string popNode::prettyPrint() {
     return "{POP}";
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *popNode::simplify() {
+    return this;
 }
 
 //  push: Stack action pushes item to top of stack.
@@ -1006,6 +1081,11 @@ std::string pushNode::prettyPrint() {
     return "{PUSH}";
 }
 
+//  Applies simplification rules (N/A)
+ASTNode *pushNode::simplify() {
+    return this;
+}
+
 //  Destructor: Node may have child or args to be cleaned.
 pushNode::~pushNode() {
     if (which == "match") {
@@ -1106,6 +1186,11 @@ std::string recursionNode::prettyPrint() {
     return "{R}";
 }
 
+//  Applies simplification rules (transformation)
+ASTNode *recursionNode::simplify() {
+    return this;
+}
+
 //  Destructor: Node may have args to be cleaned.
 recursionNode::~recursionNode() {
     if (hasArgs) {
@@ -1171,6 +1256,11 @@ std::string regexNode::prettyPrint() {
     toRet += str;
     toRet += "]";
     return toRet;
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *regexNode::simplify() {
+    return this;
 }
 
 //  sequence: parses based on multiple sub rules in a sequence.
@@ -1259,6 +1349,11 @@ std::string sequenceNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (transform, children)
+ASTNode *sequenceNode::simplify() {
+    return this;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 sequenceNode::~sequenceNode() {
     delete link;
@@ -1316,6 +1411,11 @@ std::string stringNode::prettyPrint() {
     return toRet;
 }
 
+//  Applies simplification rules (transformation)
+ASTNode *stringNode::simplify() {
+    return this;
+}
+
 //  swap: Stack action that swaps the top of the stack with the node below it.
 
 swapNode::swapNode() {
@@ -1352,6 +1452,11 @@ swapNode *swapNode::copy() {
 //  Dedicated pretty print to convert to Production Rule Form
 std::string swapNode::prettyPrint() {
     return "{SWAP}";
+}
+
+//  Applies simplification rules (N/A)
+ASTNode *swapNode::simplify() {
+    return this;
 }
 
 //  test: Parses string based on sub rule but will not update parse state.
@@ -1409,6 +1514,11 @@ std::string testNode::prettyPrint() {
     toRet += link->getChild()->prettyPrint();
     toRet += " TEST}";
     return toRet;
+}
+
+//  Applies simplification rules (children)
+ASTNode *testNode::simplify() {
+    return this;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -1473,6 +1583,11 @@ std::string testNotNode::prettyPrint() {
     toRet += link->getChild()->prettyPrint();
     toRet += " TESTNOT}";
     return toRet;
+}
+
+//  Applies simplification rules (children)
+ASTNode *testNotNode::simplify() {
+    return this;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -1546,6 +1661,11 @@ std::string zeroOrMoreNode::prettyPrint() {
     toRet += link->getChild()->prettyPrint();
     toRet += "]*";
     return toRet;
+}
+
+//  Applies simplification rules (transformation, children)
+ASTNode *zeroOrMoreNode::simplify() {
+    return this;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.

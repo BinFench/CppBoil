@@ -25,9 +25,10 @@ class ASTNode {
     //  The parent class, contains all the common functions and members to be overridden.
 public:
     virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
-    virtual void *act(stack *values) { return nullptr; };
+    virtual void *act(stack *values) {return nullptr; };
     virtual ASTNode *copy() {return nullptr;};
     virtual std::string prettyPrint() {return "";};
+    virtual ASTNode *simplify() {return nullptr;};
     std::string getId();
     ASTNode();
     virtual ~ASTNode() {}
@@ -57,6 +58,7 @@ public:
     void *act(stack *values);
     chNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class stringNode : public ASTNode {
@@ -69,6 +71,7 @@ public:
     void *act(stack *values);
     stringNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 /*
@@ -129,6 +132,7 @@ public:
     void *act(stack *values);
     anyNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class anyOfNode : public ASTNode {
@@ -141,6 +145,7 @@ public:
     void *act(stack *values);
     anyOfNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~anyOfNode();
 };
 
@@ -162,6 +167,7 @@ public:
     void *act(stack *values);
     charRangeNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~charRangeNode();
 };
 
@@ -173,6 +179,7 @@ public:
     void *act(stack *values);
     emptyNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class EOINode : public ASTNode {
@@ -183,6 +190,7 @@ public:
     void *act(stack *values);
     EOINode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class firstOfNode : public ASTNode {
@@ -195,6 +203,7 @@ public:
     void *act(stack *values);
     firstOfNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~firstOfNode();
 };
 
@@ -216,6 +225,7 @@ public:
     void *act(stack *values);
     ignoreCaseNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~ignoreCaseNode();
 };
 
@@ -227,6 +237,7 @@ public:
     void *act(stack *values);
     matchNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 
 protected:
     std::string match;
@@ -242,6 +253,7 @@ public:
     void *act(stack *values);
     noneOfNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~noneOfNode();
 };
 
@@ -259,6 +271,7 @@ public:
     void *act(stack *values);
     nothingNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class oneOrMoreNode : public ASTNode {
@@ -270,6 +283,7 @@ public:
     void *act(stack *values);
     oneOrMoreNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~oneOrMoreNode();
 };
 
@@ -282,6 +296,7 @@ public:
     void *act(stack *values);
     optionalNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~optionalNode();
 };
 
@@ -293,6 +308,7 @@ public:
     void *act(stack *values);
     peekNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class popNode : public ASTNode {
@@ -303,6 +319,7 @@ public:
     void *act(stack *values);
     popNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class pushNode : public ASTNode {
@@ -319,6 +336,7 @@ public:
     bool parse(std::string *source, linkNode *path, std::string *str);
     pushNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~pushNode();
 
 protected:
@@ -353,6 +371,7 @@ public:
     void *act(stack *values);
     recursionNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     int rid;
     ~recursionNode();
 
@@ -385,6 +404,7 @@ public:
     void *act(stack *values);
     regexNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class sequenceNode : public ASTNode {
@@ -397,6 +417,7 @@ public:
     void *act(stack *values);
     sequenceNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~sequenceNode();
 };
 
@@ -414,6 +435,7 @@ public:
     void *act(stack *values);
     swapNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
 };
 
 class testNode : public ASTNode {
@@ -425,6 +447,7 @@ public:
     void *act(stack *values);
     testNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~testNode();
 };
 
@@ -437,6 +460,7 @@ public:
     void *act(stack *values);
     testNotNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~testNotNode();
 };
 
@@ -449,6 +473,7 @@ public:
     void *act(stack *values);
     zeroOrMoreNode *copy();
     std::string prettyPrint();
+    ASTNode *simplify();
     ~zeroOrMoreNode();
 };
 #endif
