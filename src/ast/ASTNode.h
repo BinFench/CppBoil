@@ -28,7 +28,7 @@ public:
     virtual void *act(stack *values) {return nullptr; };
     virtual ASTNode *copy() {return nullptr;};
     virtual std::string prettyPrint() {return "";};
-    virtual ASTNode *simplify() {return nullptr;};
+    virtual ASTNode *simplify(bool *simplified) {return nullptr;};
     std::string getId();
     ASTNode();
     virtual ~ASTNode() {}
@@ -58,7 +58,7 @@ public:
     void *act(stack *values);
     chNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class stringNode : public ASTNode {
@@ -71,7 +71,7 @@ public:
     void *act(stack *values);
     stringNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 /*
@@ -132,7 +132,7 @@ public:
     void *act(stack *values);
     anyNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class anyOfNode : public ASTNode {
@@ -145,7 +145,7 @@ public:
     void *act(stack *values);
     anyOfNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~anyOfNode();
 };
 
@@ -167,7 +167,7 @@ public:
     void *act(stack *values);
     charRangeNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~charRangeNode();
 };
 
@@ -179,7 +179,7 @@ public:
     void *act(stack *values);
     emptyNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class EOINode : public ASTNode {
@@ -190,7 +190,7 @@ public:
     void *act(stack *values);
     EOINode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class firstOfNode : public ASTNode {
@@ -203,7 +203,7 @@ public:
     void *act(stack *values);
     firstOfNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~firstOfNode();
 };
 
@@ -225,7 +225,7 @@ public:
     void *act(stack *values);
     ignoreCaseNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~ignoreCaseNode();
 };
 
@@ -237,7 +237,7 @@ public:
     void *act(stack *values);
     matchNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 
 protected:
     std::string match;
@@ -253,7 +253,7 @@ public:
     void *act(stack *values);
     noneOfNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~noneOfNode();
 };
 
@@ -271,7 +271,7 @@ public:
     void *act(stack *values);
     nothingNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class oneOrMoreNode : public ASTNode {
@@ -283,7 +283,7 @@ public:
     void *act(stack *values);
     oneOrMoreNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~oneOrMoreNode();
 };
 
@@ -296,7 +296,7 @@ public:
     void *act(stack *values);
     optionalNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~optionalNode();
 };
 
@@ -308,7 +308,7 @@ public:
     void *act(stack *values);
     peekNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class popNode : public ASTNode {
@@ -319,7 +319,7 @@ public:
     void *act(stack *values);
     popNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class pushNode : public ASTNode {
@@ -336,7 +336,7 @@ public:
     bool parse(std::string *source, linkNode *path, std::string *str);
     pushNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~pushNode();
 
 protected:
@@ -371,7 +371,7 @@ public:
     void *act(stack *values);
     recursionNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     int rid;
     ~recursionNode();
 
@@ -404,7 +404,27 @@ public:
     void *act(stack *values);
     regexNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
+};
+
+class ruleNode : public ASTNode {
+    //  Node to hold subtree as Production Rule
+public:
+    ruleNode();
+    bool getNull();
+    void *getFirst();
+    void *getFollow();
+    void *getPredict();
+    bool parse(std::string *source, linkNode *path, std::string *last);
+    void *act(stack *values);
+    ruleNode *copy();
+    std::string prettyPrint();
+    ASTNode *simplify(bool *simplified);
+
+    int rid;
+    bool isDef;
+
+    ~ruleNode();
 };
 
 class sequenceNode : public ASTNode {
@@ -417,7 +437,7 @@ public:
     void *act(stack *values);
     sequenceNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~sequenceNode();
 };
 
@@ -435,7 +455,7 @@ public:
     void *act(stack *values);
     swapNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
 };
 
 class testNode : public ASTNode {
@@ -447,7 +467,7 @@ public:
     void *act(stack *values);
     testNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~testNode();
 };
 
@@ -460,7 +480,7 @@ public:
     void *act(stack *values);
     testNotNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~testNotNode();
 };
 
@@ -473,7 +493,7 @@ public:
     void *act(stack *values);
     zeroOrMoreNode *copy();
     std::string prettyPrint();
-    ASTNode *simplify();
+    ASTNode *simplify(bool *simplified);
     ~zeroOrMoreNode();
 };
 #endif

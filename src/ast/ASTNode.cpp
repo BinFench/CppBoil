@@ -97,7 +97,7 @@ std::string anyNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *anyNode::simplify() {
+ASTNode *anyNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -171,7 +171,7 @@ std::string anyOfNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation, children)
-ASTNode *anyOfNode::simplify() {
+ASTNode *anyOfNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -256,7 +256,7 @@ std::string charRangeNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *charRangeNode::simplify() {
+ASTNode *charRangeNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -325,7 +325,7 @@ std::string chNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *chNode::simplify() {
+ASTNode *chNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -363,7 +363,7 @@ std::string emptyNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *emptyNode::simplify() {
+ASTNode *emptyNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -405,7 +405,7 @@ std::string EOINode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *EOINode::simplify() {
+ASTNode *EOINode::simplify(bool *simplified) {
     return this;
 }
 
@@ -476,7 +476,7 @@ std::string firstOfNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation, children)
-ASTNode *firstOfNode::simplify() {
+ASTNode *firstOfNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -572,7 +572,7 @@ std::string ignoreCaseNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *ignoreCaseNode::simplify() {
+ASTNode *ignoreCaseNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -631,7 +631,7 @@ std::string matchNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *matchNode::simplify() {
+ASTNode *matchNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -717,7 +717,7 @@ std::string noneOfNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation)
-ASTNode *noneOfNode::simplify() {
+ASTNode *noneOfNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -753,7 +753,7 @@ std::string nothingNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *nothingNode::simplify() {
+ASTNode *nothingNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -823,7 +823,7 @@ std::string oneOrMoreNode::prettyPrint() {
 }
 
 //  Applies simplification rules (children)
-ASTNode *oneOrMoreNode::simplify() {
+ASTNode *oneOrMoreNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -880,7 +880,7 @@ std::string optionalNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation)
-ASTNode *optionalNode::simplify() {
+ASTNode *optionalNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -926,7 +926,7 @@ std::string peekNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *peekNode::simplify() {
+ASTNode *peekNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -967,7 +967,7 @@ std::string popNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *popNode::simplify() {
+ASTNode *popNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1082,7 +1082,7 @@ std::string pushNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *pushNode::simplify() {
+ASTNode *pushNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1187,7 +1187,7 @@ std::string recursionNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation)
-ASTNode *recursionNode::simplify() {
+ASTNode *recursionNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1259,8 +1259,80 @@ std::string regexNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *regexNode::simplify() {
+ASTNode *regexNode::simplify(bool *simplified) {
     return this;
+}
+
+//  rule: Contains subnodes as Production Rule.
+
+ruleNode::ruleNode() {
+    id = "rule";
+}
+
+// Get if this Production Rule is nullable
+bool ruleNode::getNull() {
+    return false;
+}
+
+// Get the first set of this Production Rule
+void *ruleNode::getFirst() {
+    return nullptr;
+}
+
+// Get the follow set of this Production Rule
+void *ruleNode::getFollow() {
+    return nullptr;
+}
+
+// Get the predict set of this Production Rule
+void *ruleNode::getPredict() {
+    return nullptr;
+}
+
+/*
+  Parse string at location 0.  ruleNode parses with children.
+  Return true if parse accepts, false otherwise
+  source: string to be parsed.  May be substring of parent node.
+  path: linked list of stack actions for tokenizing input.  Passed to children.
+  last: string of last matched parse.  Is updated as the accepted string in this parse.
+*/
+bool ruleNode::parse(std::string *source, linkNode *path, std::string *last) {
+    std::string *copy = new std::string();
+    *copy = *last;
+    if (link->getChild()->parse(source, path, copy)) {
+        *last = *copy;
+        delete copy;
+        return true;
+    }
+    delete copy;
+    return false;
+}
+
+//  Unused implementation, exists for debug.
+void *ruleNode::act(stack *values) {
+    return values;
+}
+
+//  Dedicated copy function for memory management.
+ruleNode *ruleNode::copy() {
+    ruleNode *toRet = new ruleNode();
+    toRet->link = link->copy();
+    return toRet;
+}
+
+//  Dedicated pretty print to convert to Production Rule Form
+std::string ruleNode::prettyPrint() {
+    return link->getChild()->prettyPrint();
+}
+
+//  Applies simplification rules (children)
+ASTNode *ruleNode::simplify(bool *simplified) {
+    return this;
+}
+
+//  Destructor: Because this has child nodes, those need to be cleaned up.
+ruleNode::~ruleNode() {
+    delete link;
 }
 
 //  sequence: parses based on multiple sub rules in a sequence.
@@ -1350,7 +1422,7 @@ std::string sequenceNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transform, children)
-ASTNode *sequenceNode::simplify() {
+ASTNode *sequenceNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1412,7 +1484,7 @@ std::string stringNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation)
-ASTNode *stringNode::simplify() {
+ASTNode *stringNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1455,7 +1527,7 @@ std::string swapNode::prettyPrint() {
 }
 
 //  Applies simplification rules (N/A)
-ASTNode *swapNode::simplify() {
+ASTNode *swapNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1517,7 +1589,7 @@ std::string testNode::prettyPrint() {
 }
 
 //  Applies simplification rules (children)
-ASTNode *testNode::simplify() {
+ASTNode *testNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1586,7 +1658,7 @@ std::string testNotNode::prettyPrint() {
 }
 
 //  Applies simplification rules (children)
-ASTNode *testNotNode::simplify() {
+ASTNode *testNotNode::simplify(bool *simplified) {
     return this;
 }
 
@@ -1664,7 +1736,7 @@ std::string zeroOrMoreNode::prettyPrint() {
 }
 
 //  Applies simplification rules (transformation, children)
-ASTNode *zeroOrMoreNode::simplify() {
+ASTNode *zeroOrMoreNode::simplify(bool *simplified) {
     return this;
 }
 

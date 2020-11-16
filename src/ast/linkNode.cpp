@@ -11,6 +11,7 @@
 linkNode::linkNode() {
     hasChild = false;
     hasSibling = false;
+    isSimplified = false;
 }
 
 void linkNode::append(linkNode *nsibling) {

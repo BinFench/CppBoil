@@ -20,6 +20,7 @@ public:
     void attach(ASTNode *child);
     bool hasSibling;
     bool hasChild;
+    bool isSimplified;
     void removeTail();
     linkNode *copy();
     ~linkNode();
