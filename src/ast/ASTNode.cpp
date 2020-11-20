@@ -58,6 +58,14 @@ std::string ASTNode::getId() {
     return id;
 }
 
+void ASTNode::addChildren(linkNode *child) {
+    link = child;
+}
+
+linkNode *ASTNode::getChildren() {
+    return link;
+}
+
 //  any: Accepts any char if parse string is not empty
 
 anyNode::anyNode() {
@@ -98,7 +106,8 @@ std::string anyNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *anyNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  anyOf: Accept any char if the parse string is accepted by any child node.
@@ -172,7 +181,63 @@ std::string anyOfNode::prettyPrint() {
 
 //  Applies simplification rules (transformation, children)
 ASTNode *anyOfNode::simplify(bool *simplified) {
-    return this;
+    //  First, simplify children before transformation 
+    linkNode *current = link;
+    bool childrenSimplified = true;
+    bool first = true;
+    bool charBased = true;
+    bool *isSimplified = new bool();
+    *isSimplified = false;
+    do {
+        if (!first) {
+            current = current->getSibling();
+        } else {
+            first = false;
+        }
+
+        if (current->hasChild) {
+            current->simplify(isSimplified);
+            if (!(*isSimplified)) {
+                childrenSimplified = false;
+            }
+        }
+    } while (current->hasSibling);
+
+    if (childrenSimplified) {
+        //  Check children to see if they are char based or not
+        first = true;
+        current = link;
+        std::string id;
+        do {
+            if (!first) {
+                current = current->getSibling();
+            } else {
+                first = false;
+            }
+
+            if (current->hasChild) {
+                id = current->getChild()->getId();
+                if (id != "char" && id != "charRange") {
+                    charBased = false;
+                    break;
+                }
+            }
+        } while (current->hasSibling);
+
+        //  Transformation
+        if (charBased) {
+            //  AnyOf(...) -> firstOf(...)
+            firstOfNode *parent = new firstOfNode();
+            parent->addChildren(link->copy());
+            return parent;
+        } else {
+            //  AnyOf(...) -> Sequence(Test(...), Any())
+            testNode *parent = new testNode();
+            parent->addChildren(link->copy());
+            return new sequenceNode(parent, new anyNode());
+        }
+    }
+    return copy();
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -257,7 +322,8 @@ std::string charRangeNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *charRangeNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -326,7 +392,8 @@ std::string chNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *chNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  empty: Matches anything, does not cut parse string
@@ -364,7 +431,8 @@ std::string emptyNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *emptyNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  EOI: Only matches end of input (empty parse string)
@@ -406,7 +474,8 @@ std::string EOINode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *EOINode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 // firstOf: Matches the first rule that accepts the parse string
@@ -573,7 +642,8 @@ std::string ignoreCaseNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *ignoreCaseNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -632,7 +702,8 @@ std::string matchNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *matchNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  noneOf:  Accepts any char as long as the parse string does not match any child rules.
@@ -642,7 +713,7 @@ noneOfNode::noneOfNode() {
 }
 
 /*
-  Parse string at location 0.  nondeOfNode accepts any character as long as the
+  Parse string at location 0.  noneOfNode accepts any character as long as the
   string is not matched by any child node.
   Return true if string is accepted.  False otherwise
   source: string to be parsed.  May be substring of parent node.
@@ -718,7 +789,63 @@ std::string noneOfNode::prettyPrint() {
 
 //  Applies simplification rules (transformation)
 ASTNode *noneOfNode::simplify(bool *simplified) {
-    return this;
+    //  First, simplify children before transformation 
+    linkNode *current = link;
+    bool childrenSimplified = true;
+    bool first = true;
+    bool charBased = true;
+    bool *isSimplified = new bool();
+    *isSimplified = false;
+    do {
+        if (!first) {
+            current = current->getSibling();
+        } else {
+            first = false;
+        }
+
+        if (current->hasChild) {
+            current->simplify(isSimplified);
+            if (!(*isSimplified)) {
+                childrenSimplified = false;
+            }
+        }
+    } while (current->hasSibling);
+
+    if (childrenSimplified) {
+        //  Check children to see if they are char based or not
+        first = true;
+        current = link;
+        std::string id;
+        do {
+            if (!first) {
+                current = current->getSibling();
+            } else {
+                first = false;
+            }
+
+            if (current->hasChild) {
+                id = current->getChild()->getId();
+                if (id != "char" && id != "charRange") {
+                    charBased = false;
+                    break;
+                }
+            }
+        } while (current->hasSibling);
+
+        //  Transformation
+        if (charBased) {
+            //  noneOf(...) -> Sequence(testNot(firstOf(...)), Any())
+            firstOfNode *parent = new firstOfNode();
+            parent->addChildren(link->copy());
+            return new sequenceNode(new testNotNode(parent), new anyNode());
+        } else {
+            //  noneOf(...) -> Sequence(testNot(...), Any())
+            testNotNode *parent = new testNotNode();
+            parent->addChildren(link->copy());
+            return new sequenceNode(parent, new anyNode());
+        }
+    }
+    return copy();
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -754,7 +881,8 @@ std::string nothingNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *nothingNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 /*
@@ -881,7 +1009,7 @@ std::string optionalNode::prettyPrint() {
 
 //  Applies simplification rules (transformation)
 ASTNode *optionalNode::simplify(bool *simplified) {
-    return this;
+    return new firstOfNode(link->getChild()->copy(), new emptyNode());
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -927,7 +1055,8 @@ std::string peekNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *peekNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  pop:  Stack action returns item from top of stack.
@@ -968,7 +1097,8 @@ std::string popNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *popNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  push: Stack action pushes item to top of stack.
@@ -1083,7 +1213,8 @@ std::string pushNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *pushNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  Destructor: Node may have child or args to be cleaned.
@@ -1186,9 +1317,10 @@ std::string recursionNode::prettyPrint() {
     return "{R}";
 }
 
-//  Applies simplification rules (transformation)
+//  Applies simplification rules (N/A)
 ASTNode *recursionNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  Destructor: Node may have args to be cleaned.
@@ -1260,13 +1392,19 @@ std::string regexNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *regexNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  rule: Contains subnodes as Production Rule.
 
 ruleNode::ruleNode() {
     id = "rule";
+}
+
+ruleNode::ruleNode(ASTNode *child, bool def) {
+    isDef = def;
+    populate("rule", child);
 }
 
 // Get if this Production Rule is nullable
@@ -1423,7 +1561,12 @@ std::string sequenceNode::prettyPrint() {
 
 //  Applies simplification rules (transform, children)
 ASTNode *sequenceNode::simplify(bool *simplified) {
-    return this;
+    if (!link->isSimplified) {
+        linkNode *newLink = link->mergeSequenceGrandchildren(simplified);
+        delete link;
+        link = newLink;
+    }
+    return copy();
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -1528,7 +1671,8 @@ std::string swapNode::prettyPrint() {
 
 //  Applies simplification rules (N/A)
 ASTNode *swapNode::simplify(bool *simplified) {
-    return this;
+    *simplified = true;
+    return copy();
 }
 
 //  test: Parses string based on sub rule but will not update parse state.
@@ -1735,9 +1879,9 @@ std::string zeroOrMoreNode::prettyPrint() {
     return toRet;
 }
 
-//  Applies simplification rules (transformation, children)
+//  Applies simplification rules (transformation)
 ASTNode *zeroOrMoreNode::simplify(bool *simplified) {
-    return this;
+    return new firstOfNode(new oneOrMoreNode(link->getChild()->copy()), new emptyNode());
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.

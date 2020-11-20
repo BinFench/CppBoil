@@ -62,13 +62,75 @@ void linkNode::removeTail() {
 linkNode *linkNode::copy() {
     linkNode *toRet = new linkNode();
     if (hasChild) {
-        toRet->ASTChildren = ASTChildren->copy();
+        toRet->attach(ASTChildren->copy());
     }
     if (hasSibling) {
-        toRet->sibling = sibling->copy();
+        toRet->append(sibling->copy());
     }
+    toRet->isSimplified = isSimplified;
 
     return toRet;
+}
+
+void linkNode::simplify(bool *simplified) {
+    if (!isSimplified) {
+        ASTNode *simple = ASTChildren->simplify(simplified);
+        delete ASTChildren;
+        ASTChildren = simple;
+        if (*simplified) {
+            isSimplified = true;
+        }
+    } else {
+        *simplified = true;
+    }
+}
+
+linkNode *linkNode::mergeSequenceGrandchildren(bool *simplified) {
+    //  If any child node is sequence, add the children to this linked list
+    //  Else, simplify
+    if (hasChild) {
+        bool *temp = new bool();
+        *temp = false;
+        if (ASTChildren->getId() == "sequence") {
+            linkNode *toRet = ASTChildren->getChildren()->copy();
+            if (hasSibling) {
+                if (!sibling->isSimplified) {
+                    sibling = sibling->mergeSequenceGrandchildren(temp);
+                }
+                toRet->getTail()->append(sibling->copy());
+            }
+            delete temp;
+            return toRet;
+        } else if (ASTChildren->getId() == "firstOf") {
+            //  Transform child to be subrule
+            ASTChildren = new ruleNode(ASTChildren);
+            if (hasSibling && !sibling->isSimplified) {
+                sibling = sibling->mergeSequenceGrandchildren(temp);
+            } else {
+                *temp = true;
+            }
+            simplify(simplified);
+            *simplified = *temp && *simplified;
+            delete temp;
+            return copy();
+        } else {
+            if (hasSibling && !sibling->isSimplified) {
+                sibling = sibling->mergeSequenceGrandchildren(temp);
+            } else {
+                *temp = true;
+            }
+            simplify(simplified);
+            *simplified = *temp && *simplified;
+            delete temp;
+            return copy();
+        }
+    }
+    if (hasSibling && !sibling->isSimplified) {
+        sibling = sibling->mergeSequenceGrandchildren(simplified);
+        return sibling->copy();
+    }
+    *simplified = true;
+    return copy();
 }
 
 linkNode::~linkNode() {

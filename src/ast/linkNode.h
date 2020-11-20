@@ -28,6 +28,8 @@ public:
     ASTNode *getChild();
     linkNode *getSibling();
     linkNode *getTail();
+    void simplify(bool *simplified);
+    linkNode *mergeSequenceGrandchildren(bool *simplified);
 
 protected:
     ASTNode *ASTChildren;

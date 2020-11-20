@@ -30,6 +30,8 @@ public:
     virtual std::string prettyPrint() {return "";};
     virtual ASTNode *simplify(bool *simplified) {return nullptr;};
     std::string getId();
+    void addChildren(linkNode *child);
+    linkNode *getChildren();
     ASTNode();
     virtual ~ASTNode() {}
 
@@ -411,6 +413,7 @@ class ruleNode : public ASTNode {
     //  Node to hold subtree as Production Rule
 public:
     ruleNode();
+    ruleNode(ASTNode *child, bool def=true);
     bool getNull();
     void *getFirst();
     void *getFollow();
