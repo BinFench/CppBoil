@@ -4,10 +4,10 @@
     Desc: declaration of arg.  Arg holds any amount of parameters to be used
           in a stack or recursion function.
 */
-#include "stack/stackLink.h"
-#include "stack/stack.h"
-#include "parser/rule.h"
-#include "ast/ASTNode.h"
+#include "../stack/stackLink.h"
+#include "../stack/stack.h"
+#include "../parser/rule.h"
+#include "../ast/ASTNode.h"
 #include <type_traits>
 
 #ifndef ARG_H

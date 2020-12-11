@@ -9,6 +9,7 @@
 #include "linkNode.h"
 #include "../stack/stack.h"
 #include "../parser/rule.h"
+#include "../utils/set/charSet.h"
 #include <type_traits>
 #include <algorithm>
 #include <functional>
@@ -24,11 +25,12 @@ class arg;
 class ASTNode {
     //  The parent class, contains all the common functions and members to be overridden.
 public:
-    virtual bool parse(std::string *source, linkNode *path, std::string *str) { return false; };
-    virtual void *act(stack *values) {return nullptr; };
+    virtual bool parse(std::string *source, linkNode *path, std::string *str) {return false;};
+    virtual void *act(stack *values) {return nullptr;};
     virtual ASTNode *copy() {return nullptr;};
     virtual std::string prettyPrint() {return "";};
     virtual ASTNode *simplify(bool *simplified) {return nullptr;};
+    virtual void getFirstChar(charSet *set, bool *skip) {*skip = true;};
     std::string getId();
     void addChildren(linkNode *child);
     linkNode *getChildren();
@@ -61,6 +63,7 @@ public:
     chNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
 };
 
 class stringNode : public ASTNode {
@@ -74,6 +77,7 @@ public:
     stringNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
 };
 
 /*
@@ -135,6 +139,7 @@ public:
     anyNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
 };
 
 class anyOfNode : public ASTNode {
@@ -148,6 +153,7 @@ public:
     anyOfNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~anyOfNode();
 };
 
@@ -170,6 +176,7 @@ public:
     charRangeNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~charRangeNode();
 };
 
@@ -206,6 +213,7 @@ public:
     firstOfNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~firstOfNode();
 };
 
@@ -228,6 +236,7 @@ public:
     ignoreCaseNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~ignoreCaseNode();
 };
 
@@ -256,6 +265,7 @@ public:
     noneOfNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~noneOfNode();
 };
 
@@ -286,6 +296,7 @@ public:
     oneOrMoreNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~oneOrMoreNode();
 };
 
@@ -374,6 +385,7 @@ public:
     recursionNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     int rid;
     ~recursionNode();
 
@@ -407,6 +419,7 @@ public:
     regexNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
 };
 
 class ruleNode : public ASTNode {
@@ -423,6 +436,7 @@ public:
     ruleNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
 
     int rid;
     bool isDef;
@@ -441,6 +455,7 @@ public:
     sequenceNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~sequenceNode();
 };
 
@@ -497,6 +512,7 @@ public:
     zeroOrMoreNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
+    void getFirstChar(charSet *set, bool *skip);
     ~zeroOrMoreNode();
 };
 #endif

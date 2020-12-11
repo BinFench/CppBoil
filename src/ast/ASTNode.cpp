@@ -7,7 +7,7 @@
           occurences of sub rules.
 */
 #include "ASTNode.h"
-#include "../arg.h"
+#include "../utils/arg.h"
 #include <iostream>
 
 //  AST: Parent node
@@ -108,6 +108,10 @@ std::string anyNode::prettyPrint() {
 ASTNode *anyNode::simplify(bool *simplified) {
     *simplified = true;
     return copy();
+}
+
+void anyNode::getFirstChar(charSet *set, bool *skip) {
+    set->addAny();
 }
 
 //  anyOf: Accept any char if the parse string is accepted by any child node.
@@ -396,6 +400,10 @@ ASTNode *chNode::simplify(bool *simplified) {
     return copy();
 }
 
+void chNode::getFirstChar(charSet *set, bool *skip) {
+    set->add(ch);
+}
+
 //  empty: Matches anything, does not cut parse string
 
 emptyNode::emptyNode() {
@@ -546,7 +554,7 @@ std::string firstOfNode::prettyPrint() {
 
 //  Applies simplification rules (transformation, children)
 ASTNode *firstOfNode::simplify(bool *simplified) {
-    return this;
+    return copy();
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -1629,6 +1637,11 @@ std::string stringNode::prettyPrint() {
 //  Applies simplification rules (transformation)
 ASTNode *stringNode::simplify(bool *simplified) {
     return this;
+}
+
+void stringNode::getFirstChar(charSet *set, bool *skip) {
+    char ch = str.at(0);
+    set->add(ch);
 }
 
 //  swap: Stack action that swaps the top of the stack with the node below it.

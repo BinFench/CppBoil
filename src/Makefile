@@ -1,7 +1,7 @@
 CC=g++
 CPPFLAGS= -g -std=c++17 -fPIC
-DEPS = arg.h parser/rule.h parser/parser.h ast/ASTNode.h ast/linkNode.h stack/stack.h stackLink.h
-OBJ = parser/parser.o ast/ASTNode.o ast/linkNode.o parser/rule.o stack/stack.o stack/stackLink.o arg.o
+DEPS = utils/arg.h utils/set/charNode.h utils/set/intNode.h utils/set/node.h utils/set/charSet.h parser/rule.h parser/parser.h ast/ASTNode.h ast/linkNode.h stack/stack.h stack/stackLink.h
+OBJ = parser/parser.o ast/ASTNode.o ast/linkNode.o parser/rule.o stack/stack.o stack/stackLink.o utils/arg.o utils/set/charNode.o utils/set/intNode.o utils/set/node.o utils/set/charSet.o
 
 default:
 	echo "Please either make static or make lib"
@@ -17,7 +17,8 @@ memtest: CBoil.o
 
 CBoil.o: $(OBJ)
 	ld -r $^ -o CBoil.o
-	rm -rf arg.o
+	rm -rf utils/*.o
+	rm -rf utils/set/*.o
 	rm -rf stack/*.o
 	rm -rf parser/*.o
 	rm -rf ast/*.o
@@ -55,4 +56,6 @@ clean:
 	rm -rf stack/*.o
 	rm -rf parser/*.o
 	rm -rf ast/*.o
+	rm -rf utils/*.o
+	rm -rf utils/set/*.o
 	rm test
