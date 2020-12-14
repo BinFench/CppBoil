@@ -385,7 +385,6 @@ public:
     recursionNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
-    void getFirstChar(charSet *set, bool *skip);
     int rid;
     ~recursionNode();
 
@@ -419,7 +418,6 @@ public:
     regexNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
-    void getFirstChar(charSet *set, bool *skip);
 };
 
 class ruleNode : public ASTNode {
@@ -436,7 +434,6 @@ public:
     ruleNode *copy();
     std::string prettyPrint();
     ASTNode *simplify(bool *simplified);
-    void getFirstChar(charSet *set, bool *skip);
 
     int rid;
     bool isDef;

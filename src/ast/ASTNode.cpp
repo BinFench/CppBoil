@@ -112,6 +112,7 @@ ASTNode *anyNode::simplify(bool *simplified) {
 
 void anyNode::getFirstChar(charSet *set, bool *skip) {
     set->addAny();
+    *skip = false;
 }
 
 //  anyOf: Accept any char if the parse string is accepted by any child node.
@@ -244,6 +245,23 @@ ASTNode *anyOfNode::simplify(bool *simplified) {
     return copy();
 }
 
+void anyOfNode::getFirstChar(charSet *set, bool *skip) {
+    linkNode *current = getChildren();
+    bool first = true;
+
+    do {
+        if (!first) {
+            current = current->getSibling();
+        } else {
+            first = false;
+        }
+        if (current->hasChild) {
+            current->getChild()->getFirstChar(set, skip);
+        }
+    } while(current->hasSibling);
+    *skip = false;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 anyOfNode::~anyOfNode() {
     delete link;
@@ -328,6 +346,20 @@ std::string charRangeNode::prettyPrint() {
 ASTNode *charRangeNode::simplify(bool *simplified) {
     *simplified = true;
     return copy();
+}
+
+void charRangeNode::getFirstChar(charSet *set, bool *skip) {
+    char min = ((chNode *)getChildren()->getChild())->ch;
+    char max = ((chNode *)getChildren()->getSibling()->getChild())->ch;
+    char temp = min >= max ? min : max;
+    min = min < max ? min : max;
+    max = temp;
+
+    for (char i = min; i <= max; i++) {
+        set->add(i);
+    }
+
+    *skip = false;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -557,6 +589,26 @@ ASTNode *firstOfNode::simplify(bool *simplified) {
     return copy();
 }
 
+void firstOfNode::getFirstChar(charSet *set, bool *skip) {
+    bool shouldSkip = true;
+    linkNode *current = getChildren();
+    bool first = true;
+    do {
+        if (!first) {
+            current = current->getSibling();
+        } else {
+            first = false;
+        }
+        if (current->hasChild) {
+            *skip = false;
+            current->getChild()->getFirstChar(set, skip);
+            shouldSkip = shouldSkip && *skip;
+        }
+    } while(current->hasSibling);
+
+    *skip = shouldSkip;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 firstOfNode::~firstOfNode() {
     delete link;
@@ -652,6 +704,25 @@ std::string ignoreCaseNode::prettyPrint() {
 ASTNode *ignoreCaseNode::simplify(bool *simplified) {
     *simplified = true;
     return copy();
+}
+
+void ignoreCaseNode::getFirstChar(charSet *set, bool *skip) {
+    ASTNode *extract = getChildren()->getChild();
+    char toAdd;
+    if (extract->getId() == "char") {
+        toAdd = ((chNode *)extract)->ch;
+    } else {
+        toAdd = ((stringNode *)extract)->str.at(0);
+    }
+    
+    if (toupper(toAdd) != tolower(toAdd)) {
+        set->add(toupper(toAdd));
+        set->add(tolower(toAdd));
+    } else {
+        set->add(toAdd);
+    }
+    
+    *skip = false;
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -856,6 +927,11 @@ ASTNode *noneOfNode::simplify(bool *simplified) {
     return copy();
 }
 
+void noneOfNode::getFirstChar(charSet *set, bool *skip) {
+    set->addAny();
+    *skip = false;
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 noneOfNode::~noneOfNode() {
     delete link;
@@ -961,6 +1037,10 @@ std::string oneOrMoreNode::prettyPrint() {
 //  Applies simplification rules (children)
 ASTNode *oneOrMoreNode::simplify(bool *simplified) {
     return this;
+}
+
+void oneOrMoreNode::getFirstChar(charSet *set, bool *skip) {
+    getChildren()->getChild()->getFirstChar(set, skip);
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
@@ -1577,6 +1657,24 @@ ASTNode *sequenceNode::simplify(bool *simplified) {
     return copy();
 }
 
+void sequenceNode::getFirstChar(charSet *set, bool *skip) {
+    bool first = true;
+    linkNode *current = getChildren();
+
+    do {
+        if (!first) {
+            current = current->getSibling();
+        } else {
+            first = false;
+        }
+
+        if (current->hasChild) {
+            *skip = false;
+            current->getChild()->getFirstChar(set, skip);
+        }
+    } while (current->hasSibling && *skip);
+}
+
 //  Destructor: Because this has child nodes, those need to be cleaned up.
 sequenceNode::~sequenceNode() {
     delete link;
@@ -1895,6 +1993,10 @@ std::string zeroOrMoreNode::prettyPrint() {
 //  Applies simplification rules (transformation)
 ASTNode *zeroOrMoreNode::simplify(bool *simplified) {
     return new firstOfNode(new oneOrMoreNode(link->getChild()->copy()), new emptyNode());
+}
+
+void zeroOrMoreNode::getFirstChar(charSet *set, bool *skip) {
+    getChildren()->getChild()->getFirstChar(set, skip);
 }
 
 //  Destructor: Because this has child nodes, those need to be cleaned up.
